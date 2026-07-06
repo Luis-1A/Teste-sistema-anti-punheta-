@@ -1,1 +1,1023 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recomeço - Controle & Evolução</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* CSS / DESIGN SYSTEM INTERNO (Modos Claro/Escuro & Cores Dinâmicas) */
+        :root {
+            --primary-rgb: 99, 102, 241; /* Indigo padrão */
+            --primary: rgb(var(--primary-rgb));
+            --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --font-size-base: 16px;
+            --radius: 16px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="dark"] {
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: var(--font-size-base);
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            transition: var(--transition);
+        }
+
+        /* Layout Responsivo App Shell */
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+            border-left: 1px solid var(--border);
+            border-right: 1px solid var(--border);
+            padding-bottom: 80px;
+        }
+
+        header {
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            background: var(--card-bg);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .xp-bar-mini {
+            width: 100px;
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 4px;
+        }
+
+        .xp-progress-mini {
+            height: 100%;
+            background: var(--success);
+            width: 40%;
+            transition: var(--transition);
+        }
+
+        /* Botão SOS Fixo Elegante */
+        .sos-btn {
+            position: fixed;
+            bottom: 95px;
+            right: calc(50% - 220px);
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 30px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(239, 68, 68, 0.4);
+            z-index: 99;
+            transition: var(--transition);
+            animation: pulse 2s infinite;
+        }
+
+        @media (max-width: 500px) {
+            .sos-btn { right: 20px; }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 10px 20px rgba(239, 68, 68, 0.4); }
+            50% { transform: scale(1.05); box-shadow: 0 10px 25px rgba(239, 68, 68, 0.6); }
+            100% { transform: scale(1); box-shadow: 0 10px 20px rgba(239, 68, 68, 0.4); }
+        }
+
+        /* Views do App */
+        .view {
+            display: none;
+            padding: 20px;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .view.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cards Estilizados */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .counter-display {
+            text-align: center;
+            padding: 30px 10px;
+        }
+
+        .time-units {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin: 20px 0;
+        }
+
+        .time-box {
+            background: linear-gradient(135deg, var(--primary) 0%, rgba(var(--primary-rgb), 0.8) 100%);
+            color: white;
+            padding: 12px 4px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .time-box span {
+            display: block;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .time-box label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            opacity: 0.8;
+        }
+
+        /* Abas de Navegação Inferior */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: calc(50% - 240px);
+            width: 100%;
+            max-width: 480px;
+            background: var(--card-bg);
+            border-top: 1px solid var(--border);
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            padding: 10px 0;
+            z-index: 100;
+        }
+
+        @media (max-width: 500px) {
+            .nav-bar { left: 0; }
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 0.7rem;
+            gap: 4px;
+            background: none;
+            border: none;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* Lista de Hábitos & Checkbox */
+        .habit-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 10px;
+            transition: var(--transition);
+        }
+
+        .habit-check {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .habit-item.done {
+            background: rgba(16, 185, 129, 0.05);
+            border-color: var(--success);
+        }
+
+        .habit-item.done .habit-check {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        /* Calendário Customizado */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+            margin-top: 15px;
+        }
+
+        .cal-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .cal-day.current { border-color: var(--primary); color: var(--primary); font-weight: 700; }
+        .cal-day.success { background: var(--success); color: white; }
+        .cal-day.recap { background: var(--danger); color: white; }
+
+        /* Utilitários Globais de Formulário */
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+
+        .btn-secondary { background: var(--border); color: var(--text-main); }
+        .btn-danger { background: var(--danger); color: white; }
+
+        select, input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            color: var(--text-main);
+            border-radius: 12px;
+            margin-top: 6px;
+            margin-bottom: 16px;
+            outline: none;
+        }
+
+        /* Tela de Exercício de Respiração */
+        .breathing-circle {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            background: rgba(99, 102, 241, 0.2);
+            border: 4px solid var(--primary);
+            margin: 40px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            animation: breath 8s infinite ease-in-out;
+        }
+
+        @keyframes breath {
+            0%, 100% { transform: scale(1); background: rgba(99, 102, 241, 0.2); }
+            50% { transform: scale(1.3); background: rgba(99, 102, 241, 0.5); }
+        }
+
+        /* Mock de Gráficos em CSS */
+        .mock-chart-bar {
+            display: flex;
+            align-items: flex-end;
+            gap: 12px;
+            height: 150px;
+            padding-top: 20px;
+            border-bottom: 2px solid var(--border);
+        }
+        .chart-column {
+            flex: 1;
+            background: var(--primary);
+            border-radius: 4px 4px 0 0;
+            min-height: 10px;
+            position: relative;
+            transition: var(--transition);
+        }
+        .chart-column::after {
+            content: attr(data-label);
+            position: absolute;
+            bottom: -22px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.65rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <header>
+            <div class="user-badge">
+                <div class="avatar" id="user-avatar">R</div>
+                <div>
+                    <h4 style="font-size: 0.9rem;" id="user-level-txt">Nível 1</h4>
+                    <div class="xp-bar-mini"><div class="xp-progress-mini" id="xp-bar"></div></div>
+                </div>
+            </div>
+            <h2 style="font-size: 1.1rem; font-weight: 700; color: var(--primary);">Recomeço</h2>
+        </header>
+
+        <button class="sos-btn" onclick="App.navigate('sos')">
+            <i data-lucide="life-buoy"></i> SOS
+        </button>
+
+        <div id="view-home" class="view active">
+            <div class="card counter-display">
+                <p id="current-date" style="font-size: 0.85rem; color: var(--text-muted);"></p>
+                <h3 style="margin-top: 10px;">Livre de comportamentos compulsivos há:</h3>
+                
+                <div class="time-units">
+                    <div class="time-box"><span id="count-d">00</span><label>Dias</label></div>
+                    <div class="time-box"><span id="count-h">00</span><label>Horas</label></div>
+                    <div class="time-box"><span id="count-m">00</span><label>Min</label></div>
+                    <div class="time-box"><span id="count-s">00</span><label>Seg</label></div>
+                </div>
+
+                <div style="margin: 15px 0;">
+                    <p style="font-size: 0.85rem; display: flex; justify-content: space-between;">
+                        <span>Meta Atual: <b id="meta-txt">3 Dias</b></span>
+                        <span id="meta-percent">0%</span>
+                    </p>
+                    <div class="xp-bar-mini" style="width: 100%; height: 8px; margin-top: 6px;">
+                        <div class="xp-progress-mini" id="meta-bar" style="width: 0%; background: var(--primary);"></div>
+                    </div>
+                </div>
+
+                <blockquote id="motivational-quote" style="font-style: italic; color: var(--text-muted); font-size: 0.9rem; padding: 10px; border-left: 3px solid var(--primary); margin-top: 15px;">
+                    "Cada segundo de escolha consciente reconstrói sua liberdade."
+                </blockquote>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+                <button class="btn btn-secondary" onclick="App.openRelapseModal()" style="border: 1px solid var(--danger); color: var(--danger);">
+                    <i data-lucide="alert-triangle"></i> Recaí
+                </button>
+                <button class="btn" onclick="App.navigate('diario')">
+                    <i data-lucide="book-open"></i> Diário
+                </button>
+            </div>
+
+            <div class="card">
+                <h3 style="margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                    <i data-lucide="check-square" style="color: var(--primary);"></i> Hábitos de Hoje
+                </h3>
+                <div id="home-habits-list">
+                    </div>
+            </div>
+        </div>
+
+        <div id="view-dashboard" class="view">
+            <h3 style="margin-bottom: 15px;">Seu Painel de Evolução</h3>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+                <div class="card" style="margin: 0; padding: 15px;">
+                    <label style="font-size: 0.75rem; color: var(--text-muted);">Sequência Atual</label>
+                    <h2 id="dash-current-streak" style="font-size: 1.8rem; color: var(--primary);">0d</h2>
+                </div>
+                <div class="card" style="margin: 0; padding: 15px;">
+                    <label style="font-size: 0.75rem; color: var(--text-muted);">Melhor Sequência</label>
+                    <h2 id="dash-best-streak" style="font-size: 1.8rem; color: var(--success);">0d</h2>
+                </div>
+                <div class="card" style="margin: 0; padding: 15px;">
+                    <label style="font-size: 0.75rem; color: var(--text-muted);">Total Recaídas</label>
+                    <h2 id="dash-relapses" style="font-size: 1.8rem; color: var(--danger);">0</h2>
+                </div>
+                <div class="card" style="margin: 0; padding: 15px;">
+                    <label style="font-size: 0.75rem; color: var(--text-muted);">Total Conquistas</label>
+                    <h2 id="dash-badges" style="font-size: 1.8rem; color: var(--warning);">0</h2>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Frequência de Gatilhos</h3>
+                <div class="mock-chart-bar" id="trigger-chart">
+                    </div>
+            </div>
+
+            <div class="card">
+                <h3>Metas e Conquistas</h3>
+                <div id="badges-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 15px; text-align: center;">
+                    </div>
+            </div>
+        </div>
+
+        <div id="view-calendar" class="view">
+            <div class="card">
+                <h3 id="calendar-month-year">Julho 2026</h3>
+                <div class="calendar-grid" id="calendar-days">
+                    </div>
+                <div style="margin-top: 15px; display: flex; gap: 10px; font-size: 0.8rem;">
+                    <span>🟢 Concluído</span>
+                    <span>🔴 Recaída</span>
+                    <span>🟡 Atual</span>
+                </div>
+            </div>
+
+            <div class="card" id="day-notes-card" style="display: none;">
+                <h4 id="notes-date-title">Notas do Dia</h4>
+                <label>Humor</label>
+                <select id="cal-mood">
+                    <option>😀 Excelente</option>
+                    <option>😐 Neutro</option>
+                    <option>😔 Triste/Ansioso</option>
+                    <option>🤬 Estressado</option>
+                </select>
+                <label>Intensidade da Vontade (1-5)</label>
+                <input type="number" id="cal-urge" min="1" max="5" value="1">
+                <label>Observações</label>
+                <textarea id="cal-notes" rows="2" placeholder="Como foi o autocontrole hoje?"></textarea>
+                <button class="btn" onclick="App.saveDayDetails()">Salvar Detalhes do Dia</button>
+            </div>
+        </div>
+
+        <div id="view-habits" class="view">
+            <div class="card">
+                <h3>Gerenciar Hábitos</h3>
+                <div style="display: flex; gap: 8px; margin-top: 10px;">
+                    <input type="text" id="new-habit-name" placeholder="Ex: Ler, Academia..." style="margin:0;">
+                    <button class="btn" onclick="App.createCustomHabit()" style="width: auto; padding: 0 15px;"><i data-lucide="plus"></i></button>
+                </div>
+                <div id="manage-habits-list" style="margin-top: 15px;"></div>
+            </div>
+
+            <div class="card">
+                <h3>Biblioteca de Apoio</h3>
+                <input type="text" id="lib-search" placeholder="🔍 Buscar artigos (Ex: Ansiedade, Foco)" oninput="App.searchLibrary()">
+                <div id="library-results"></div>
+            </div>
+        </div>
+
+        <div id="view-settings" class="view">
+            <div class="card">
+                <h3>Personalização</h3>
+                
+                <label>Tema de Cores</label>
+                <select id="setting-theme" onchange="App.applyTheme(this.value)">
+                    <option value="light">☀️ Modo Claro</option>
+                    <option value="dark">🌙 Modo Escuro</option>
+                </select>
+
+                <label>Cor de Destaque</label>
+                <select id="setting-color" onchange="App.applyColor(this.value)">
+                    <option value="99, 102, 241">🔮 Índigo Premium</option>
+                    <option value="16, 185, 129">🌿 Verde Equilíbrio</option>
+                    <option value="239, 68, 68">❤️ Vermelho Alerta</option>
+                    <option value="245, 158, 11">🔥 Laranja Energia</option>
+                </select>
+
+                <label>Tamanho da Fonte</label>
+                <select id="setting-font" onchange="App.applyFont(this.value)">
+                    <option value="14px">Pequena</option>
+                    <option value="16px" selected>Média (Padrão)</option>
+                    <option value="18px">Grande</option>
+                </select>
+
+                <button class="btn btn-danger" onclick="App.resetAllData()" style="margin-top: 20px;">
+                    <i data-lucide="trash-2"></i> Resetar Todos os Dados
+                </button>
+            </div>
+        </div>
+
+        <div id="view-relapse" class="view">
+            <div class="card">
+                <h2 style="color: var(--danger); margin-bottom: 10px;">O que aconteceu?</h2>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 15px;">Cair faz parte do processo de aprendizado. Sem julgamentos ou culpa aqui.</p>
+                
+                <label>Gatilho Principal</label>
+                <select id="relapse-trigger">
+                    <option>Ansiedade</option>
+                    <option>Estresse</option>
+                    <option>Solidão</option>
+                    <option>Tédio</option>
+                    <option>Tristeza</option>
+                    <option>Redes sociais</option>
+                    <option>Conteúdo adulto</option>
+                    <option>Insônia</option>
+                    <option>Outro</option>
+                </select>
+
+                <label>Intensidade do Impulso (1 ao 5)</label>
+                <input type="number" id="relapse-intensity" min="1" max="5" value="3">
+
+                <label>Notas / O que você estava sentindo?</label>
+                <textarea id="relapse-notes" rows="3" placeholder="Escreva para entender o padrão..."></textarea>
+
+                <button class="btn btn-danger" onclick="App.saveRelapse()">Salvar e Recomeçar com Firmeza</button>
+                <button class="btn btn-secondary" onclick="App.navigate('home')" style="margin-top: 10px;">Cancelar</button>
+            </div>
+        </div>
+
+        <div id="view-diario" class="view">
+            <div class="card">
+                <h2>Check-in do Diário</h2>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 15px;">Registre seu estado mental para ganhar bônus de XP.</p>
+                
+                <label>Como está seu humor hoje?</label>
+                <select id="diary-mood"><option>Ótimo</option><option>Normal</option><option>Ansioso</option><option>Irritado</option></select>
+                
+                <label>Nível de Estresse (1-5)</label>
+                <input type="number" id="diary-stress" min="1" max="5" value="2">
+
+                <label>O que fez de positivo hoje?</label>
+                <textarea id="diary-positive" rows="2" placeholder="Uma pequena vitória..."></textarea>
+
+                <button class="btn" onclick="App.saveDiary()">Salvar Registro Diário</button>
+                <button class="btn btn-secondary" onclick="App.navigate('home')" style="margin-top: 10px;">Voltar</button>
+            </div>
+        </div>
+
+        <div id="view-sos" class="view">
+            <div class="card" style="text-align: center; border-color: var(--danger);">
+                <h2 style="color: var(--danger);">Zona de Resgate SOS</h2>
+                <p style="font-size: 0.9rem; color: var(--text-muted);">O impulso dura em média 10 minutos. Vamos vencer esse tempo juntos.</p>
+                
+                <div style="font-size: 2.5rem; font-weight: 800; color: var(--danger); margin: 15px 0;" id="sos-timer">10:00</div>
+                
+                <div class="breathing-circle" id="breath-box">Inspire / Expire</div>
+
+                <div style="text-align: left; margin-top: 20px;">
+                    <h4>💡 Estratégias de Distração Imediata:</h4>
+                    <ul style="margin-left: 20px; font-size: 0.9rem; margin-top: 8px; line-height: 1.6;">
+                        <li>Beba um copo cheio de água bem gelada.</li>
+                        <li>Faça 15 flexões ou agachamentos agora mesmo.</li>
+                        <li>Lave o rosto com água fria.</li>
+                        <li>Saia do ambiente em que você está imediatamente.</li>
+                    </ul>
+                </div>
+
+                <button class="btn" onclick="App.navigate('home')" style="margin-top: 25px;">Estou Seguro / Sair do SOS</button>
+            </div>
+        </div>
+
+        <nav class="nav-bar">
+            <button class="nav-item active" onclick="App.navigate('home', this)"><i data-lucide="home"></i>Início</button>
+            <button class="nav-item" onclick="App.navigate('dashboard', this)"><i data-lucide="bar-chart-2"></i>Painel</button>
+            <button class="nav-item" onclick="App.navigate('calendar', this)"><i data-lucide="calendar"></i>Histórico</button>
+            <button class="nav-item" onclick="App.navigate('habits', this)"><i data-lucide="heart"></i>Hábitos</button>
+            <button class="nav-item" onclick="App.navigate('settings', this)"><i data-lucide="settings"></i>Ajustes</button>
+        </nav>
+    </div>
+
+    <script>
+        // Módulo de Dados e Armazenamento Local
+        const Storage = {
+            get() {
+                const defaultData = {
+                    startDate: new Date().getTime(),
+                    bestStreak: 0,
+                    relapses: [],
+                    xp: 0,
+                    level: 1,
+                    habits: [
+                        { id: 1, name: 'Beber Água', history: {} },
+                        { id: 2, name: 'Meditação / Respiração', history: {} },
+                        { id: 3, name: 'Leitura', history: {} }
+                    ],
+                    dayDetails: {},
+                    settings: { theme: 'light', color: '99, 102, 241', fontSize: '16px' }
+                };
+                return JSON.parse(localStorage.getItem('recomeco_data')) || defaultData;
+            },
+            save(data) {
+                localStorage.setItem('recomeco_data', JSON.stringify(data));
+            }
+        };
+
+        // Biblioteca de artigos local
+        const LibraryDB = [
+            { t: 'Formação de Hábitos', c: 'Hábitos são construídos com Gatilho, Rotina e Recompensa. Mude a rotina mantendo o gatilho.' },
+            { t: 'Controle de Impulsos', c: 'O impulso é como uma onda: ele cresce, atinge o pico e desce sozinho se você não agir.' },
+            { t: 'Ansiedade e Compulsão', c: 'A compulsão tenta aliviar a ansiedade temporariamente. Trate o estresse com respiração profunda.' },
+            { t: 'Foco e Atenção Plena', c: 'Mantenha sua mente no momento presente. A procrastinação alimenta o tédio, que traz o impulso.' }
+        ];
+
+        // Estado Global da Aplicação
+        let state = Storage.get();
+        let sosInterval = null;
+        let selectedCalDay = null;
+
+        // Core App Module
+        const App = {
+            init() {
+                lucide.createIcons();
+                App.startCounter();
+                App.renderHomeHabits();
+                App.renderDashboard();
+                App.renderCalendar();
+                App.applyConfigStyles();
+                App.searchLibrary();
+                
+                // Set Data Atual
+                document.getElementById('current-date').innerText = new Date().toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            },
+
+            navigate(viewId, element) {
+                document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+                document.getElementById(`view-${viewId}`).classList.add('active');
+                
+                if(element) {
+                    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                    element.classList.add('active');
+                }
+
+                // Gerenciador específico de views
+                if(viewId === 'sos') App.startSosTimer();
+                else App.stopSosTimer();
+
+                if(viewId === 'dashboard') App.renderDashboard();
+                if(viewId === 'calendar') App.renderCalendar();
+            },
+
+            startCounter() {
+                setInterval(() => {
+                    const now = new Date().getTime();
+                    const diff = now - state.startDate;
+
+                    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+                    const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                    const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+                    document.getElementById('count-d').innerText = String(d).padStart(2, '0');
+                    document.getElementById('count-h').innerText = String(h).padStart(2, '0');
+                    document.getElementById('count-m').innerText = String(m).padStart(2, '0');
+                    document.getElementById('count-s').innerText = String(s).padStart(2, '0');
+
+                    // Atualizar metas dinâmicas baseadas nos dias do usuário
+                    App.updateMetaProgress(d);
+                }, 1000);
+            },
+
+            updateMetaProgress(currentDays) {
+                const milestones = [1, 3, 7, 15, 30, 60, 90, 180, 365];
+                let currentMeta = milestones.find(m => m > currentDays) || 365;
+                let prevMeta = milestones[milestones.indexOf(currentMeta) - 1] || 0;
+                
+                document.getElementById('meta-txt').innerText = `${currentMeta} Dias`;
+                let percent = Math.min(100, Math.floor(((currentDays - prevMeta) / (currentMeta - prevMeta)) * 100)) || 0;
+                if(currentDays >= currentMeta) percent = 100;
+
+                document.getElementById('meta-percent').innerText = `${percent}%`;
+                document.getElementById('meta-bar').style.width = `${percent}%`;
+
+                // Update best streak
+                if(currentDays > state.bestStreak) {
+                    state.bestStreak = currentDays;
+                    Storage.save(state);
+                }
+            },
+
+            addXp(amount) {
+                state.xp += amount;
+                const nextLevelXp = state.level * 100;
+                if(state.xp >= nextLevelXp) {
+                    state.xp -= nextLevelXp;
+                    state.level++;
+                    alert(`🎉 Parabéns! Você subiu para o Nível ${state.level}! Continue firme.`);
+                }
+                document.getElementById('user-level-txt').innerText = `Nível ${state.level}`;
+                document.getElementById('xp-bar').style.width = `${(state.xp / (state.level * 100)) * 100}%`;
+                Storage.save(state);
+            },
+
+            renderHomeHabits() {
+                const container = document.getElementById('home-habits-list');
+                const todayStr = new Date().toISOString().split('T')[0];
+                container.innerHTML = '';
+
+                state.habits.forEach(h => {
+                    const isDone = h.history[todayStr] ? 'done' : '';
+                    container.innerHTML += `
+                        <div class="habit-item ${isDone}" onclick="App.toggleHabit(${h.id}, '${todayStr}')">
+                            <span>${h.name}</span>
+                            <div class="habit-check">${isDone ? '✓' : ''}</div>
+                        </div>
+                    `;
+                });
+            },
+
+            toggleHabit(id, dateStr) {
+                const habit = state.habits.find(h => h.id === id);
+                if(habit) {
+                    if(habit.history[dateStr]) {
+                        delete habit.history[dateStr];
+                    } else {
+                        habit.history[dateStr] = true;
+                        App.addXp(15);
+                    }
+                    Storage.save(state);
+                    App.renderHomeHabits();
+                }
+            },
+
+            createCustomHabit() {
+                const name = document.getElementById('new-habit-name').value.trim();
+                if(!name) return;
+                state.habits.push({ id: Date.now(), name: name, history: {} });
+                document.getElementById('new-habit-name').value = '';
+                Storage.save(state);
+                App.renderHomeHabits();
+                App.renderManageHabits();
+            },
+
+            renderManageHabits() {
+                const container = document.getElementById('manage-habits-list');
+                container.innerHTML = '';
+                state.habits.forEach(h => {
+                    container.innerHTML += `
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center; padding:8px; border:1px solid var(--border); border-radius:8px;">
+                            <span>${h.name}</span>
+                            <button onclick="App.deleteHabit(${h.id})" style="background:none; border:none; color:var(--danger); cursor:pointer;">Excluir</button>
+                        </div>
+                    `;
+                });
+            },
+
+            deleteHabit(id) {
+                state.habits = state.habits.filter(h => h.id !== id);
+                Storage.save(state);
+                App.renderHomeHabits();
+                App.renderManageHabits();
+            },
+
+            openRelapseModal() {
+                App.navigate('relapse');
+            },
+
+            saveRelapse() {
+                const trigger = document.getElementById('relapse-trigger').value;
+                const intensity = document.getElementById('relapse-intensity').value;
+                const notes = document.getElementById('relapse-notes').value;
+                const todayStr = new Date().toISOString().split('T')[0];
+
+                state.relapses.push({
+                    date: new Date().getTime(),
+                    trigger, intensity, notes
+                });
+
+                // Registrar recaída no calendário do dia
+                state.dayDetails[todayStr] = { status: 'recap', mood: '🤬 Estressado', urge: intensity, notes: `Recaída: ${notes}` };
+
+                // Reseta contador
+                state.startDate = new Date().getTime();
+                Storage.save(state);
+
+                alert("❤️ O erro não define sua jornada. O que importa é sua coragem de recomeçar agora mesmo! Estamos juntos.");
+                App.navigate('home');
+                App.init();
+            },
+
+            saveDiary() {
+                const mood = document.getElementById('diary-mood').value;
+                const positive = document.getElementById('diary-positive').value;
+                const todayStr = new Date().toISOString().split('T')[0];
+
+                state.dayDetails[todayStr] = { status: 'success', mood: mood, urge: 1, notes: positive };
+                App.addXp(30);
+                
+                alert("✨ Registro salvo! Você ganhou +30 XP pelo seu comprometimento diário.");
+                App.navigate('home');
+            },
+
+            renderCalendar() {
+                const container = document.getElementById('calendar-days');
+                container.innerHTML = '';
+                const today = new Date();
+                const totalDays = new Date(2026, 7, 0).getDate(); // Julho de 2026 estático para demonstração flexível do grid
+
+                for(let i = 1; i <= totalDays; i++) {
+                    const currentDayStr = `2026-07-${String(i).padStart(2, '0')}`;
+                    let dayClass = '';
+                    
+                    if(state.dayDetails[currentDayStr]) {
+                        dayClass = state.dayDetails[currentDayStr].status === 'success' ? 'success' : 'recap';
+                    } else if (i === today.getDate()) {
+                        dayClass = 'current';
+                    }
+
+                    container.innerHTML += `<div class="cal-day ${dayClass}" onclick="App.openDayNotes('${currentDayStr}')">${i}</div>`;
+                }
+            },
+
+            openDayNotes(dateStr) {
+                selectedCalDay = dateStr;
+                document.getElementById('day-notes-card').style.display = 'block';
+                document.getElementById('notes-date-title').innerText = `Detalhes de: ${dateStr}`;
+                
+                if(state.dayDetails[dateStr]) {
+                    document.getElementById('cal-mood').value = state.dayDetails[dateStr].mood || '😐 Neutro';
+                    document.getElementById('cal-urge').value = state.dayDetails[dateStr].urge || 1;
+                    document.getElementById('cal-notes').value = state.dayDetails[dateStr].notes || '';
+                } else {
+                    document.getElementById('cal-notes').value = '';
+                }
+            },
+
+            saveDayDetails() {
+                if(!selectedCalDay) return;
+                if(!state.dayDetails[selectedCalDay]) state.dayDetails[selectedCalDay] = { status: 'success' };
+                
+                state.dayDetails[selectedCalDay].mood = document.getElementById('cal-mood').value;
+                state.dayDetails[selectedCalDay].urge = document.getElementById('cal-urge').value;
+                state.dayDetails[selectedCalDay].notes = document.getElementById('cal-notes').value;
+                
+                Storage.save(state);
+                App.renderCalendar();
+                alert("Salvo com sucesso!");
+            },
+
+            renderDashboard() {
+                const currentDiff = new Date().getTime() - state.startDate;
+                const currentDays = Math.floor(currentDiff / (1000 * 60 * 60 * 24));
+                
+                document.getElementById('dash-current-streak').innerText = `${currentDays}d`;
+                document.getElementById('dash-best-streak').innerText = `${state.bestStreak}d`;
+                document.getElementById('dash-relapses').innerText = state.relapses.length;
+
+                // Renderizar Gráfico de Gatilhos Simulado por CSS puro
+                const triggerCounts = {};
+                state.relapses.forEach(r => { triggerCounts[r.trigger] = (triggerCounts[r.trigger] || 0) + 1; });
+
+                const chart = document.getElementById('trigger-chart');
+                chart.innerHTML = '';
+                const baseTriggers = ['Ansiedade', 'Estresse', 'Tédio', 'Solidão'];
+                
+                baseTriggers.forEach(t => {
+                    const count = triggerCounts[t] || 0;
+                    const heightPercent = Math.min(100, (count * 20) + 10);
+                    chart.innerHTML += `<div class="chart-column" style="height: ${heightPercent}%;" data-label="${t} (${count})"></div>`;
+                });
+
+                // Medalhas Conquistas
+                const badgesGrid = document.getElementById('badges-grid');
+                badgesGrid.innerHTML = '';
+                const badges = [
+                    { name: '🥇 1º Dia', cond: currentDays >= 1 },
+                    { name: '💎 1 Semana', cond: currentDays >= 7 },
+                    { name: '🔥 1 Mês', cond: currentDays >= 30 },
+                    { name: '🎯 Focado', cond: state.habits.length > 2 }
+                ];
+                let activeBadgesCount = 0;
+                badges.forEach(b => {
+                    if(b.cond) activeBadgesCount++;
+                    badgesGrid.innerHTML += `
+                        <div style="opacity: ${b.cond ? 1 : 0.25}; font-size: 0.75rem;">
+                            <div style="font-size: 1.8rem;">${b.name.split(' ')[0]}</div>
+                            <div>${b.name.split(' ').slice(1).join(' ')}</div>
+                        </div>
+                    `;
+                });
+                document.getElementById('dash-badges').innerText = activeBadgesCount;
+            },
+
+            searchLibrary() {
+                const query = document.getElementById('lib-search').value.toLowerCase();
+                const container = document.getElementById('library-results');
+                container.innerHTML = '';
+
+                const filtered = LibraryDB.filter(a => a.t.toLowerCase().includes(query) || a.c.toLowerCase().includes(query));
+                filtered.forEach(a => {
+                    container.innerHTML += `
+                        <div style="padding:12px; border-bottom:1px solid var(--border)">
+                            <h4 style="color:var(--primary); font-size:0.95rem;">${a.t}</h4>
+                            <p style="font-size:0.85rem; color:var(--text-muted); margin-top:4px;">${a.c}</p>
+                        </div>
+                    `;
+                });
+            },
+
+            startSosTimer() {
+                let time = 600;
+                if(sosInterval) clearInterval(sosInterval);
+                sosInterval = setInterval(() => {
+                    let min = Math.floor(time / 60);
+                    let seg = time % 60;
+                    document.getElementById('sos-timer').innerText = `${String(min).padStart(2, '0')}:${String(seg).padStart(2, '0')}`;
+                    if(time <= 0) {
+                        clearInterval(sosInterval);
+                        alert("Sensacional! Você resistiu aos 10 minutos críticos. O impulso passou!");
+                        App.navigate('home');
+                    }
+                    time--;
+                }, 1000);
+            },
+
+            stopSosTimer() {
+                if(sosInterval) clearInterval(sosInterval);
+            },
+
+            applyTheme(theme) {
+                document.documentElement.setAttribute('data-theme', theme);
+                state.settings.theme = theme;
+                Storage.save(state);
+            },
+
+            applyColor(rgbStr) {
+                document.documentElement.style.setProperty('--primary-rgb', rgbStr);
+                state.settings.color = rgbStr;
+                Storage.save(state);
+            },
+
+            applyFont(size) {
+                document.documentElement.style.setProperty('--font-size-base', size);
+                state.settings.fontSize = size;
+                Storage.save(state);
+            },
+
+            applyConfigStyles() {
+                document.getElementById('setting-theme').value = state.settings.theme;
+                document.getElementById('setting-color').value = state.settings.color;
+                document.getElementById('setting-font').value = state.settings.fontSize;
+                
+                App.applyTheme(state.settings.theme);
+                App.applyColor(state.settings.color);
+                App.applyFont(state.settings.fontSize);
+            },
+
+            resetAllData() {
+                if(confirm("Tem certeza que quer apagar seu histórico? Isso não pode ser desfeito!")) {
+                    localStorage.removeItem('recomeco_data');
+                    location.reload();
+                }
+            }
+        };
+
+        // Inicialização Global do App Shell
+        window.onload = () => { App.init(); App.renderManageHabits(); };
+    </script>
+</body>
+</html>
 
