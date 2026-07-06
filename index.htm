@@ -1,1023 +1,904 @@
+
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recomeço - Controle & Evolução</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Recomeço - Sistema de Suporte e Evolução Pessoal</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
+    
     <style>
-        /* CSS / DESIGN SYSTEM INTERNO (Modos Claro/Escuro & Cores Dinâmicas) */
+        /* ==========================================
+           DESIGNS SYSTEM & CORES DINÂMICAS (CSS)
+           ========================================== */
         :root {
-            --primary-rgb: 99, 102, 241; /* Indigo padrão */
+            --p-indigo: 99, 102, 241;
+            --p-emerald: 16, 185, 129;
+            --p-rose: 244, 63, 94;
+            --p-amber: 245, 158, 11;
+            
+            --primary-rgb: var(--p-indigo);
             --primary: rgb(var(--primary-rgb));
-            --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            --card-bg: #ffffff;
-            --text-main: #0f172a;
+            --primary-light: rgba(var(--primary-rgb), 0.15);
+            
+            /* Light Theme Default */
+            --bg-app: #f8fafc;
+            --bg-surface: #ffffff;
+            --border-color: #e2e8f0;
+            --text-title: #0f172a;
+            --text-body: #334155;
             --text-muted: #64748b;
-            --border: #e2e8f0;
+            
             --success: #10b981;
             --danger: #ef4444;
             --warning: #f59e0b;
-            --font-size-base: 16px;
-            --radius: 16px;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            
+            --radius-sm: 8px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-scale: 100%;
         }
 
         [data-theme="dark"] {
-            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            --card-bg: #1e293b;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --border: #334155;
+            --bg-app: #090d16;
+            --bg-surface: #121826;
+            --border-color: #1f293d;
+            --text-title: #f8fafc;
+            --text-body: #cbd5e1;
+            --text-muted: #64748b;
         }
 
+        /* Base Reset */
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
             font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: var(--font-size-base);
-            -webkit-tap-highlight-color: transparent;
+            font-size: calc(1rem * (var(--font-scale) / 100));
+            scrollbar-width: none;
         }
+        *::-webkit-scrollbar { display: none; }
 
         body {
-            background: var(--bg-gradient);
-            color: var(--text-main);
-            min-height: 100vh;
+            background-color: var(--bg-app);
+            color: var(--text-body);
             display: flex;
-            flex-direction: column;
-            overflow-x: hidden;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
             transition: var(--transition);
         }
 
-        /* Layout Responsivo App Shell */
-        .app-container {
+        /* App Layout Frame (Simulação Premium PWA) */
+        .app-shell {
             width: 100%;
-            max-width: 480px;
-            margin: 0 auto;
-            background: var(--card-bg);
-            min-height: 100vh;
+            max-width: 460px;
+            height: 100vh;
+            background: var(--bg-surface);
             display: flex;
             flex-direction: column;
             position: relative;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
-            border-left: 1px solid var(--border);
-            border-right: 1px solid var(--border);
-            padding-bottom: 80px;
+            overflow: hidden;
+            box-shadow: 0 30px 60px -12px rgba(0,0,0,0.25);
+            border: 1px solid var(--border-color);
         }
 
-        header {
-            padding: 20px;
+        @media(min-width: 480px) {
+            .app-shell {
+                height: 880px;
+                border-radius: var(--radius-lg);
+            }
+        }
+
+        /* Header Dynamic Profile */
+        .app-header {
+            padding: 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid var(--border);
-            background: var(--card-bg);
-            position: sticky;
-            top: 0;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(var(--bg-surface), 0.8);
+            backdrop-filter: blur(10px);
             z-index: 10;
         }
 
-        .user-badge {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .avatar {
-            width: 40px;
-            height: 40px;
+        .profile-container { display: flex; align-items: center; gap: 12px; }
+        .profile-avatar {
+            width: 46px;
+            height: 46px;
             border-radius: 50%;
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--primary) 0%, rgba(var(--primary-rgb), 0.6) 100%);
             color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
+            font-weight: 800;
+            box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.3);
         }
+        
+        .xp-tracker { width: 120px; }
+        .xp-text { font-size: 0.75rem; font-weight: 700; color: var(--text-title); display: flex; justify-content: space-between;}
+        .progress-bar-bg { width: 100%; height: 6px; background: var(--border-color); border-radius: 3px; margin-top: 4px; overflow: hidden; }
+        .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--success)); width: 0%; transition: width 0.5s ease; }
 
-        .xp-bar-mini {
-            width: 100px;
-            height: 6px;
-            background: var(--border);
-            border-radius: 3px;
-            overflow: hidden;
-            margin-top: 4px;
-        }
-
-        .xp-progress-mini {
-            height: 100%;
-            background: var(--success);
-            width: 40%;
-            transition: var(--transition);
-        }
-
-        /* Botão SOS Fixo Elegante */
-        .sos-btn {
-            position: fixed;
-            bottom: 95px;
-            right: calc(50% - 220px);
-            background: var(--danger);
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 30px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            box-shadow: 0 10px 20px rgba(239, 68, 68, 0.4);
-            z-index: 99;
-            transition: var(--transition);
-            animation: pulse 2s infinite;
-        }
-
-        @media (max-width: 500px) {
-            .sos-btn { right: 20px; }
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); box-shadow: 0 10px 20px rgba(239, 68, 68, 0.4); }
-            50% { transform: scale(1.05); box-shadow: 0 10px 25px rgba(239, 68, 68, 0.6); }
-            100% { transform: scale(1); box-shadow: 0 10px 20px rgba(239, 68, 68, 0.4); }
-        }
-
-        /* Views do App */
-        .view {
-            display: none;
+        /* Main Viewport Content */
+        .app-content {
+            flex: 1;
+            overflow-y: scroll;
             padding: 20px;
-            animation: fadeIn 0.4s ease;
+            padding-bottom: 100px;
         }
 
-        .view.active { display: block; }
+        .view-panel { display: none; animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .view-panel.active { display: block; }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Cards Estilizados */
-        .card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
+        /* Global Cards System */
+        .premium-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
             padding: 20px;
             margin-bottom: 20px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.02);
+            position: relative;
+            overflow: hidden;
         }
 
-        .counter-display {
-            text-align: center;
-            padding: 30px 10px;
-        }
+        /* Contador de Alta Performance */
+        .chronometer-wrap { text-align: center; padding: 15px 0; }
+        .chrono-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 20px 0; }
+        .chrono-box { background: var(--bg-app); border: 1px solid var(--border-color); padding: 14px 4px; border-radius: 14px; text-align: center; transition: var(--transition); }
+        .chrono-box span { display: block; font-size: 1.8rem; font-weight: 800; color: var(--primary); }
+        .chrono-box label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px; }
 
-        .time-units {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            margin: 20px 0;
-        }
-
-        .time-box {
-            background: linear-gradient(135deg, var(--primary) 0%, rgba(var(--primary-rgb), 0.8) 100%);
-            color: white;
-            padding: 12px 4px;
-            border-radius: 12px;
-            text-align: center;
-        }
-
-        .time-box span {
-            display: block;
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
-
-        .time-box label {
-            font-size: 0.65rem;
-            text-transform: uppercase;
-            opacity: 0.8;
-        }
-
-        /* Abas de Navegação Inferior */
-        .nav-bar {
-            position: fixed;
+        /* Bottom Nav Menu */
+        .bottom-nav {
+            position: absolute;
             bottom: 0;
-            left: calc(50% - 240px);
+            left: 0;
             width: 100%;
-            max-width: 480px;
-            background: var(--card-bg);
-            border-top: 1px solid var(--border);
+            background: rgba(var(--bg-surface), 0.95);
+            border-top: 1px solid var(--border-color);
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            padding: 10px 0;
+            padding: 12px 0 24px 0;
+            backdrop-filter: blur(12px);
             z-index: 100;
         }
 
-        @media (max-width: 500px) {
-            .nav-bar { left: 0; }
+        .nav-tab {
+            background: none; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: var(--text-muted); cursor: pointer; font-size: 0.7rem; font-weight: 600; gap: 4px; transition: var(--transition);
         }
+        .nav-tab.active { color: var(--primary); transform: translateY(-2px); }
+        .nav-tab i { transition: var(--transition); }
+        .nav-tab.active i { transform: scale(1.1); color: var(--primary); }
 
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-muted);
-            cursor: pointer;
-            font-size: 0.7rem;
-            gap: 4px;
-            background: none;
-            border: none;
-        }
-
-        .nav-item.active {
-            color: var(--primary);
-            font-weight: 600;
-        }
-
-        /* Lista de Hábitos & Checkbox */
-        .habit-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 14px;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            margin-bottom: 10px;
-            transition: var(--transition);
-        }
-
-        .habit-check {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            border: 2px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .habit-item.done {
-            background: rgba(16, 185, 129, 0.05);
-            border-color: var(--success);
-        }
-
-        .habit-item.done .habit-check {
-            background: var(--success);
-            border-color: var(--success);
-            color: white;
-        }
-
-        /* Calendário Customizado */
-        .calendar-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 6px;
-            margin-top: 15px;
-        }
-
-        .cal-day {
-            aspect-ratio: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            font-size: 0.85rem;
-            font-weight: 500;
-            cursor: pointer;
-            border: 1px solid transparent;
-        }
-
-        .cal-day.current { border-color: var(--primary); color: var(--primary); font-weight: 700; }
-        .cal-day.success { background: var(--success); color: white; }
-        .cal-day.recap { background: var(--danger); color: white; }
-
-        /* Utilitários Globais de Formulário */
-        .btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: var(--transition);
-        }
-
-        .btn-secondary { background: var(--border); color: var(--text-main); }
-        .btn-danger { background: var(--danger); color: white; }
-
-        select, input, textarea {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid var(--border);
-            background: var(--card-bg);
-            color: var(--text-main);
-            border-radius: 12px;
-            margin-top: 6px;
-            margin-bottom: 16px;
-            outline: none;
-        }
-
-        /* Tela de Exercício de Respiração */
-        .breathing-circle {
-            width: 160px;
-            height: 160px;
-            border-radius: 50%;
-            background: rgba(99, 102, 241, 0.2);
-            border: 4px solid var(--primary);
-            margin: 40px auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            animation: breath 8s infinite ease-in-out;
-        }
-
-        @keyframes breath {
-            0%, 100% { transform: scale(1); background: rgba(99, 102, 241, 0.2); }
-            50% { transform: scale(1.3); background: rgba(99, 102, 241, 0.5); }
-        }
-
-        /* Mock de Gráficos em CSS */
-        .mock-chart-bar {
-            display: flex;
-            align-items: flex-end;
-            gap: 12px;
-            height: 150px;
-            padding-top: 20px;
-            border-bottom: 2px solid var(--border);
-        }
-        .chart-column {
-            flex: 1;
-            background: var(--primary);
-            border-radius: 4px 4px 0 0;
-            min-height: 10px;
-            position: relative;
-            transition: var(--transition);
-        }
-        .chart-column::after {
-            content: attr(data-label);
+        /* SOS Hyperdrive Overlay Button */
+        .sos-floating-trigger {
             position: absolute;
-            bottom: -22px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 0.65rem;
-            color: var(--text-muted);
+            bottom: 90px;
+            right: 24px;
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 14px 22px;
+            border-radius: 40px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            box-shadow: 0 12px 24px rgba(239, 68, 68, 0.4);
+            z-index: 99;
+            animation: pulseWave 2.5s infinite;
         }
+
+        @keyframes pulseWave {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); transform: scale(1); }
+            50% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); transform: scale(1.04); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); transform: scale(1); }
+        }
+
+        /* Inputs & Componentes UI */
+        .btn-action {
+            width: 100%; padding: 14px; border-radius: 12px; font-weight: 700; border: none; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 8px; transition: var(--transition);
+        }
+        .btn-primary { background: var(--primary); color: white; box-shadow: 0 6px 16px rgba(var(--primary-rgb), 0.25); }
+        .btn-primary:hover { opacity: 0.9; }
+        .btn-outline-danger { background: transparent; border: 1.5px solid var(--danger); color: var(--danger); }
+
+        select, input[type="text"], input[type="number"], textarea {
+            width: 100%; padding: 12px 16px; background: var(--bg-app); border: 1px solid var(--border-color);
+            color: var(--text-title); border-radius: 10px; outline: none; margin-top: 6px; margin-bottom: 14px; font-weight: 500;
+        }
+
+        /* Calendário Matricial Complexo */
+        .calendar-header-strip { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .calendar-grid-matrix { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; text-align: center; }
+        .weekday-lbl { font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+        .matrix-cell {
+            aspect-ratio: 1; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 0.85rem; font-weight: 600; cursor: pointer; border: 1px solid transparent; transition: var(--transition);
+            position: relative;
+        }
+        .matrix-cell:hover { background: var(--primary-light); }
+        .matrix-cell.status-clean { background: var(--success); color: white; }
+        .matrix-cell.status-relapse { background: var(--danger); color: white; }
+        .matrix-cell.status-today { border: 2px solid var(--primary); color: var(--primary); font-weight: 800; }
+
+        /* Sistema Interativo de Hábitos */
+        .habit-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 16px; border: 1px solid var(--border-color); border-radius: 14px; margin-bottom: 10px;
+            transition: var(--transition); cursor: pointer;
+        }
+        .habit-info h4 { font-size: 0.95rem; color: var(--text-title); font-weight: 600; }
+        .habit-info p { font-size: 0.75rem; color: var(--text-muted); }
+        .habit-checkbox-circle { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--border-color); display: flex; align-items: center; justify-content: center; color: white; transition: var(--transition); }
+        .habit-row.completed { background: rgba(16, 185, 129, 0.06); border-color: var(--success); }
+        .habit-row.completed .habit-checkbox-circle { background: var(--success); border-color: var(--success); }
+
+        /* Gráfico SVG Avançado Embutido */
+        .svg-chart-container { width: 100%; height: 160px; margin-top: 15px; display: flex; align-items: flex-end; justify-content: space-between; padding-top: 10px; }
+        .chart-svg-bar { flex: 1; margin: 0 4px; background: linear-gradient(180deg, var(--primary), rgba(var(--primary-rgb), 0.3)); border-radius: 6px 6px 0 0; min-height: 5px; position: relative; transition: var(--transition); animation: growUp 0.6s ease; }
+        .chart-svg-bar::after { content: attr(data-pop); position: absolute; top: -20px; left: 50%; transform: translateX(-50%); font-size: 0.65rem; font-weight: 700; color: var(--text-title); opacity: 0; transition: 0.2s; }
+        .chart-svg-bar:hover::after { opacity: 1; }
+
+        /* Engine União de Respiração SOS */
+        .breath-pulser-node {
+            width: 180px; height: 180px; border-radius: 50%; background: rgba(99, 102, 241, 0.15);
+            border: 2px dashed var(--primary); margin: 30px auto; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; font-weight: 800; color: var(--primary);
+            transition: all 4s ease-in-out;
+        }
+        .breath-pulser-node.inhale { transform: scale(1.35); background: rgba(99, 102, 241, 0.4); border-style: solid; }
+        .breath-pulser-node.hold { transform: scale(1.35); background: rgba(245, 158, 11, 0.3); border-color: var(--warning); }
+        .breath-pulser-node.exhale { transform: scale(1); background: rgba(16, 185, 129, 0.2); border-color: var(--success); }
+
+        /* Biblioteca Grid Layout */
+        .library-card-item { padding: 14px; border-bottom: 1px solid var(--border-color); cursor: pointer; transition: var(--transition); }
+        .library-card-item:hover { background: var(--primary-light); }
     </style>
 </head>
 <body>
 
-    <div class="app-container">
-        <header>
-            <div class="user-badge">
-                <div class="avatar" id="user-avatar">R</div>
+    <div class="app-shell">
+        
+        <header class="app-header">
+            <div class="profile-container">
+                <div class="profile-avatar" id="avatar-lbl">LV</div>
                 <div>
-                    <h4 style="font-size: 0.9rem;" id="user-level-txt">Nível 1</h4>
-                    <div class="xp-bar-mini"><div class="xp-progress-mini" id="xp-bar"></div></div>
+                    <h5 style="color: var(--text-title); font-size: 0.9rem;" id="level-title-lbl">Guerreiro Nível 1</h5>
+                    <div class="xp-tracker">
+                        <div class="xp-text"><span id="xp-numerical">0 / 100 XP</span></div>
+                        <div class="progress-bar-bg"><div class="progress-bar-fill" id="xp-fill-node"></div></div>
+                    </div>
                 </div>
             </div>
-            <h2 style="font-size: 1.1rem; font-weight: 700; color: var(--primary);">Recomeço</h2>
+            <div style="text-align: right;">
+                <span id="badge-master-icon" style="font-size: 1.4rem;">🌱</span>
+            </div>
         </header>
 
-        <button class="sos-btn" onclick="App.navigate('sos')">
-            <i data-lucide="life-buoy"></i> SOS
+        <button class="sos-floating-trigger" onclick="Engine.goto('sos')">
+            <i data-lucide="life-buoy"></i> ENTRAR EM SOS
         </button>
 
-        <div id="view-home" class="view active">
-            <div class="card counter-display">
-                <p id="current-date" style="font-size: 0.85rem; color: var(--text-muted);"></p>
-                <h3 style="margin-top: 10px;">Livre de comportamentos compulsivos há:</h3>
-                
-                <div class="time-units">
-                    <div class="time-box"><span id="count-d">00</span><label>Dias</label></div>
-                    <div class="time-box"><span id="count-h">00</span><label>Horas</label></div>
-                    <div class="time-box"><span id="count-m">00</span><label>Min</label></div>
-                    <div class="time-box"><span id="count-s">00</span><label>Seg</label></div>
-                </div>
+        <main class="app-content">
 
-                <div style="margin: 15px 0;">
-                    <p style="font-size: 0.85rem; display: flex; justify-content: space-between;">
-                        <span>Meta Atual: <b id="meta-txt">3 Dias</b></span>
-                        <span id="meta-percent">0%</span>
+            <div id="panel-home" class="view-panel active">
+                <div class="premium-card chronometer-wrap">
+                    <p style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;" id="live-date-lbl">---</p>
+                    <h3 style="margin-top: 6px; font-weight: 700; color: var(--text-title);">Tempo Conquistado</h3>
+                    
+                    <div class="chrono-grid">
+                        <div class="chrono-box"><span id="c-days">00</span><label>Dias</label></div>
+                        <div class="chrono-box"><span id="c-hours">00</span><label>Horas</label></div>
+                        <div class="chrono-box"><span id="c-min">00</span><label>Min</label></div>
+                        <div class="chrono-box"><span id="c-sec">00</span><label>Seg</label></div>
+                    </div>
+
+                    <div style="margin-top: 15px;">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 600;">
+                            <span style="color: var(--text-muted);">Próximo Alvo: <b id="target-meta-lbl">3 Dias</b></span>
+                            <span id="target-meta-pct" style="color: var(--primary);">0%</span>
+                        </div>
+                        <div class="progress-bar-bg" style="height: 8px;"><div class="progress-bar-fill" id="target-meta-fill" style="background: var(--primary);"></div></div>
+                    </div>
+                    
+                    <p id="quote-box" style="margin-top: 15px; font-style: italic; font-size: 0.85rem; color: var(--text-muted); border-left: 3px solid var(--primary); padding-left: 10px; text-align: left;">
+                        "Sua mente é um músculo. Cada negação fortalece sua liberdade."
                     </p>
-                    <div class="xp-bar-mini" style="width: 100%; height: 8px; margin-top: 6px;">
-                        <div class="xp-progress-mini" id="meta-bar" style="width: 0%; background: var(--primary);"></div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+                    <button class="btn-action btn-outline-danger" onclick="Engine.goto('relapse-form')">
+                        <i data-lucide="frown"></i> Tive Recaída
+                    </button>
+                    <button class="btn-action btn-primary" onclick="Engine.goto('diary-form')">
+                        <i data-lucide="pen-tool"></i> Auto-Avaliação
+                    </button>
+                </div>
+
+                <h3 style="margin-bottom: 12px; font-weight: 800; color: var(--text-title);">Rotina Resiliente</h3>
+                <div id="habits-today-hook"></div>
+            </div>
+
+            <div id="panel-analytics" class="view-panel">
+                <h3 style="margin-bottom: 16px; font-weight: 800;">Métricas Avançadas</h3>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+                    <div class="premium-card" style="margin:0; padding: 14px;">
+                        <label style="font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Maior Registro</label>
+                        <h2 id="an-best-streak" style="font-size: 1.8rem; font-weight: 800; color: var(--success);">0d</h2>
+                    </div>
+                    <div class="premium-card" style="margin:0; padding: 14px;">
+                        <label style="font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Índice de Quedas</label>
+                        <h2 id="an-total-relapses" style="font-size: 1.8rem; font-weight: 800; color: var(--danger);">0</h2>
                     </div>
                 </div>
 
-                <blockquote id="motivational-quote" style="font-style: italic; color: var(--text-muted); font-size: 0.9rem; padding: 10px; border-left: 3px solid var(--primary); margin-top: 15px;">
-                    "Cada segundo de escolha consciente reconstrói sua liberdade."
-                </blockquote>
+                <div class="premium-card">
+                    <h4 style="font-weight: 700; margin-bottom: 10px;">Gatilhos mais Recorrentes</h4>
+                    <div class="svg-chart-container" id="triggers-chart-hook"></div>
+                </div>
+
+                <div class="premium-card">
+                    <h4 style="font-weight: 700; margin-bottom: 15px;">Medalhas Desbloqueadas</h4>
+                    <div id="achievements-matrix-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; text-align: center;"></div>
+                </div>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
-                <button class="btn btn-secondary" onclick="App.openRelapseModal()" style="border: 1px solid var(--danger); color: var(--danger);">
-                    <i data-lucide="alert-triangle"></i> Recaí
-                </button>
-                <button class="btn" onclick="App.navigate('diario')">
-                    <i data-lucide="book-open"></i> Diário
-                </button>
-            </div>
-
-            <div class="card">
-                <h3 style="margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
-                    <i data-lucide="check-square" style="color: var(--primary);"></i> Hábitos de Hoje
-                </h3>
-                <div id="home-habits-list">
+            <div id="panel-calendar" class="view-panel">
+                <div class="premium-card">
+                    <div class="calendar-header-strip">
+                        <h3 id="cal-month-title" style="font-weight: 800;">Julho 2026</h3>
+                        <span style="font-size: 0.8rem; font-weight: 700; color: var(--primary);">Histórico Offline</span>
                     </div>
-            </div>
-        </div>
-
-        <div id="view-dashboard" class="view">
-            <h3 style="margin-bottom: 15px;">Seu Painel de Evolução</h3>
-            
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
-                <div class="card" style="margin: 0; padding: 15px;">
-                    <label style="font-size: 0.75rem; color: var(--text-muted);">Sequência Atual</label>
-                    <h2 id="dash-current-streak" style="font-size: 1.8rem; color: var(--primary);">0d</h2>
-                </div>
-                <div class="card" style="margin: 0; padding: 15px;">
-                    <label style="font-size: 0.75rem; color: var(--text-muted);">Melhor Sequência</label>
-                    <h2 id="dash-best-streak" style="font-size: 1.8rem; color: var(--success);">0d</h2>
-                </div>
-                <div class="card" style="margin: 0; padding: 15px;">
-                    <label style="font-size: 0.75rem; color: var(--text-muted);">Total Recaídas</label>
-                    <h2 id="dash-relapses" style="font-size: 1.8rem; color: var(--danger);">0</h2>
-                </div>
-                <div class="card" style="margin: 0; padding: 15px;">
-                    <label style="font-size: 0.75rem; color: var(--text-muted);">Total Conquistas</label>
-                    <h2 id="dash-badges" style="font-size: 1.8rem; color: var(--warning);">0</h2>
-                </div>
-            </div>
-
-            <div class="card">
-                <h3>Frequência de Gatilhos</h3>
-                <div class="mock-chart-bar" id="trigger-chart">
+                    
+                    <div class="calendar-grid-matrix">
+                        <div class="weekday-lbl">D</div><div class="weekday-lbl">S</div><div class="weekday-lbl">T</div>
+                        <div class="weekday-lbl">Q</div><div class="weekday-lbl">Q</div><div class="weekday-lbl">S</div>
+                        <div class="weekday-lbl">S</div>
                     </div>
-            </div>
+                    <div class="calendar-grid-matrix" id="cal-days-matrix-hook" style="margin-top: 8px;"></div>
+                </div>
 
-            <div class="card">
-                <h3>Metas e Conquistas</h3>
-                <div id="badges-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 15px; text-align: center;">
+                <div class="premium-card" id="cal-inspection-panel" style="display: none;">
+                    <h4 id="ins-date-title" style="color: var(--primary); font-weight: 700;">Inspecionar Dia</h4>
+                    <div style="margin-top: 10px;">
+                        <label>Estado Emocional Definido</label>
+                        <select id="ins-mood-select">
+                            <option value="😀 Excelente">😀 Excelente e Focado</option>
+                            <option value="😐 Neutro">😐 Estável / Sob controle</option>
+                            <option value="😔 Vulnerável">😔 Ansioso ou Instável</option>
+                            <option value="🤬 Crise">🤬 Alto Estresse</option>
+                        </select>
+                        <label>Intensidade do Impulso Detectado</label>
+                        <input type="number" id="ins-intensity" min="1" max="5" value="1">
+                        <label>Notas Clínicas Pessoais</label>
+                        <textarea id="ins-text" rows="2" placeholder="Descreva pensamentos ou gatilhos sofridos..."></textarea>
+                        <button class="btn-action btn-primary" onclick="Engine.saveInspectionDay()">Salvar Notas do Dia</button>
                     </div>
+                </div>
             </div>
-        </div>
 
-        <div id="view-calendar" class="view">
-            <div class="card">
-                <h3 id="calendar-month-year">Julho 2026</h3>
-                <div class="calendar-grid" id="calendar-days">
+            <div id="panel-habits" class="view-panel">
+                <div class="premium-card">
+                    <h3 style="font-weight: 800; margin-bottom: 12px;">Arquitetura de Hábitos</h3>
+                    <div style="display: flex; gap: 8px;">
+                        <input type="text" id="habit-input-name" placeholder="Ex: Academia, Leitura, Código..." style="margin:0;">
+                        <button class="btn-action btn-primary" onclick="Engine.addCustomHabit()" style="width: auto; padding: 0 16px;"><i data-lucide="plus"></i></button>
                     </div>
-                <div style="margin-top: 15px; display: flex; gap: 10px; font-size: 0.8rem;">
-                    <span>🟢 Concluído</span>
-                    <span>🔴 Recaída</span>
-                    <span>🟡 Atual</span>
+                    <div id="manage-habits-hook" style="margin-top: 15px;"></div>
+                </div>
+
+                <div class="premium-card">
+                    <h3 style="font-weight: 800; margin-bottom: 12px;">Biblioteca de Reprogramação Cognitiva</h3>
+                    <input type="text" id="lib-search-node" placeholder="🔍 Pesquisar artigos de autocontrole..." oninput="Engine.searchLibrary()">
+                    <div id="library-render-hook"></div>
                 </div>
             </div>
 
-            <div class="card" id="day-notes-card" style="display: none;">
-                <h4 id="notes-date-title">Notas do Dia</h4>
-                <label>Humor</label>
-                <select id="cal-mood">
-                    <option>😀 Excelente</option>
-                    <option>😐 Neutro</option>
-                    <option>😔 Triste/Ansioso</option>
-                    <option>🤬 Estressado</option>
-                </select>
-                <label>Intensidade da Vontade (1-5)</label>
-                <input type="number" id="cal-urge" min="1" max="5" value="1">
-                <label>Observações</label>
-                <textarea id="cal-notes" rows="2" placeholder="Como foi o autocontrole hoje?"></textarea>
-                <button class="btn" onclick="App.saveDayDetails()">Salvar Detalhes do Dia</button>
-            </div>
-        </div>
+            <div id="panel-settings" class="view-panel">
+                <div class="premium-card">
+                    <h3 style="font-weight: 800; margin-bottom: 16px;">Configurações Operacionais</h3>
+                    
+                    <label>Interface Visual</label>
+                    <select id="set-theme" onchange="Engine.updateTheme(this.value)">
+                        <option value="dark">🌙 Dark Mode (Recomendado)</option>
+                        <option value="light">☀️ Light Mode</option>
+                    </select>
 
-        <div id="view-habits" class="view">
-            <div class="card">
-                <h3>Gerenciar Hábitos</h3>
-                <div style="display: flex; gap: 8px; margin-top: 10px;">
-                    <input type="text" id="new-habit-name" placeholder="Ex: Ler, Academia..." style="margin:0;">
-                    <button class="btn" onclick="App.createCustomHabit()" style="width: auto; padding: 0 15px;"><i data-lucide="plus"></i></button>
+                    <label>Esquema Cromático Psicológico</label>
+                    <select id="set-color" onchange="Engine.updateColor(this.value)">
+                        <option value="var(--p-indigo)">🔮 Indigo Focus</option>
+                        <option value="var(--p-emerald)">🌿 Emerald Zen</option>
+                        <option value="var(--p-rose)">❤️ Rose Alert</option>
+                        <option value="var(--p-amber)">🔥 Amber Surge</option>
+                    </select>
+
+                    <label>Calibragem de Escala de Fonte</label>
+                    <select id="set-font" onchange="Engine.updateFont(this.value)">
+                        <option value="95%">Compacta</option>
+                        <option value="100%" selected>Padrão de Sistema</option>
+                        <option value="105%">Modo Ampliado</option>
+                    </select>
+
+                    <button class="btn-action btn-outline-danger" onclick="Engine.wipeDatabase()" style="margin-top: 20px;">
+                        <i data-lucide="shield-alert"></i> DESTRUIR TODOS OS DADOS DO LOCALSTORAGE
+                    </button>
                 </div>
-                <div id="manage-habits-list" style="margin-top: 15px;"></div>
             </div>
 
-            <div class="card">
-                <h3>Biblioteca de Apoio</h3>
-                <input type="text" id="lib-search" placeholder="🔍 Buscar artigos (Ex: Ansiedade, Foco)" oninput="App.searchLibrary()">
-                <div id="library-results"></div>
-            </div>
-        </div>
+            <div id="panel-diary-form" class="view-panel">
+                <div class="premium-card">
+                    <h2 style="font-weight: 800; margin-bottom: 8px;">Auto-Avaliação Consciente</h2>
+                    <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 15px;">Mapear o estado emocional evita impulsos inconscientes.</p>
+                    
+                    <label>Como define seu Humor Predominante?</label>
+                    <select id="f-diary-mood"><option>Equilibrado e Firme</option><option>Ansioso / Inquieto</option><option>Entediado / Cansado</option><option>Irritado</option></select>
+                    
+                    <label>Nível de Tensão/Estresse Corporal (1-5)</label>
+                    <input type="number" id="f-diary-stress" min="1" max="5" value="1">
 
-        <div id="view-settings" class="view">
-            <div class="card">
-                <h3>Personalização</h3>
-                
-                <label>Tema de Cores</label>
-                <select id="setting-theme" onchange="App.applyTheme(this.value)">
-                    <option value="light">☀️ Modo Claro</option>
-                    <option value="dark">🌙 Modo Escuro</option>
-                </select>
+                    <label>Vitória ou Atitude Positiva Executada Hoje</label>
+                    <textarea id="f-diary-positive" rows="3" placeholder="O que você fez hoje para blindar sua mente?"></textarea>
 
-                <label>Cor de Destaque</label>
-                <select id="setting-color" onchange="App.applyColor(this.value)">
-                    <option value="99, 102, 241">🔮 Índigo Premium</option>
-                    <option value="16, 185, 129">🌿 Verde Equilíbrio</option>
-                    <option value="239, 68, 68">❤️ Vermelho Alerta</option>
-                    <option value="245, 158, 11">🔥 Laranja Energia</option>
-                </select>
-
-                <label>Tamanho da Fonte</label>
-                <select id="setting-font" onchange="App.applyFont(this.value)">
-                    <option value="14px">Pequena</option>
-                    <option value="16px" selected>Média (Padrão)</option>
-                    <option value="18px">Grande</option>
-                </select>
-
-                <button class="btn btn-danger" onclick="App.resetAllData()" style="margin-top: 20px;">
-                    <i data-lucide="trash-2"></i> Resetar Todos os Dados
-                </button>
-            </div>
-        </div>
-
-        <div id="view-relapse" class="view">
-            <div class="card">
-                <h2 style="color: var(--danger); margin-bottom: 10px;">O que aconteceu?</h2>
-                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 15px;">Cair faz parte do processo de aprendizado. Sem julgamentos ou culpa aqui.</p>
-                
-                <label>Gatilho Principal</label>
-                <select id="relapse-trigger">
-                    <option>Ansiedade</option>
-                    <option>Estresse</option>
-                    <option>Solidão</option>
-                    <option>Tédio</option>
-                    <option>Tristeza</option>
-                    <option>Redes sociais</option>
-                    <option>Conteúdo adulto</option>
-                    <option>Insônia</option>
-                    <option>Outro</option>
-                </select>
-
-                <label>Intensidade do Impulso (1 ao 5)</label>
-                <input type="number" id="relapse-intensity" min="1" max="5" value="3">
-
-                <label>Notas / O que você estava sentindo?</label>
-                <textarea id="relapse-notes" rows="3" placeholder="Escreva para entender o padrão..."></textarea>
-
-                <button class="btn btn-danger" onclick="App.saveRelapse()">Salvar e Recomeçar com Firmeza</button>
-                <button class="btn btn-secondary" onclick="App.navigate('home')" style="margin-top: 10px;">Cancelar</button>
-            </div>
-        </div>
-
-        <div id="view-diario" class="view">
-            <div class="card">
-                <h2>Check-in do Diário</h2>
-                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 15px;">Registre seu estado mental para ganhar bônus de XP.</p>
-                
-                <label>Como está seu humor hoje?</label>
-                <select id="diary-mood"><option>Ótimo</option><option>Normal</option><option>Ansioso</option><option>Irritado</option></select>
-                
-                <label>Nível de Estresse (1-5)</label>
-                <input type="number" id="diary-stress" min="1" max="5" value="2">
-
-                <label>O que fez de positivo hoje?</label>
-                <textarea id="diary-positive" rows="2" placeholder="Uma pequena vitória..."></textarea>
-
-                <button class="btn" onclick="App.saveDiary()">Salvar Registro Diário</button>
-                <button class="btn btn-secondary" onclick="App.navigate('home')" style="margin-top: 10px;">Voltar</button>
-            </div>
-        </div>
-
-        <div id="view-sos" class="view">
-            <div class="card" style="text-align: center; border-color: var(--danger);">
-                <h2 style="color: var(--danger);">Zona de Resgate SOS</h2>
-                <p style="font-size: 0.9rem; color: var(--text-muted);">O impulso dura em média 10 minutos. Vamos vencer esse tempo juntos.</p>
-                
-                <div style="font-size: 2.5rem; font-weight: 800; color: var(--danger); margin: 15px 0;" id="sos-timer">10:00</div>
-                
-                <div class="breathing-circle" id="breath-box">Inspire / Expire</div>
-
-                <div style="text-align: left; margin-top: 20px;">
-                    <h4>💡 Estratégias de Distração Imediata:</h4>
-                    <ul style="margin-left: 20px; font-size: 0.9rem; margin-top: 8px; line-height: 1.6;">
-                        <li>Beba um copo cheio de água bem gelada.</li>
-                        <li>Faça 15 flexões ou agachamentos agora mesmo.</li>
-                        <li>Lave o rosto com água fria.</li>
-                        <li>Saia do ambiente em que você está imediatamente.</li>
-                    </ul>
+                    <button class="btn-action btn-primary" onclick="Engine.submitDiaryForm()">Registrar Evolução (+40 XP)</button>
+                    <button class="btn-action btn-outline-danger" onclick="Engine.goto('home')" style="margin-top: 10px;">Abortar</button>
                 </div>
-
-                <button class="btn" onclick="App.navigate('home')" style="margin-top: 25px;">Estou Seguro / Sair do SOS</button>
             </div>
-        </div>
 
-        <nav class="nav-bar">
-            <button class="nav-item active" onclick="App.navigate('home', this)"><i data-lucide="home"></i>Início</button>
-            <button class="nav-item" onclick="App.navigate('dashboard', this)"><i data-lucide="bar-chart-2"></i>Painel</button>
-            <button class="nav-item" onclick="App.navigate('calendar', this)"><i data-lucide="calendar"></i>Histórico</button>
-            <button class="nav-item" onclick="App.navigate('habits', this)"><i data-lucide="heart"></i>Hábitos</button>
-            <button class="nav-item" onclick="App.navigate('settings', this)"><i data-lucide="settings"></i>Ajustes</button>
+            <div id="panel-relapse-form" class="view-panel">
+                <div class="premium-card" style="border-color: var(--danger);">
+                    <h2 style="color: var(--danger); font-weight: 800; margin-bottom: 6px;">Análise da Queda</h2>
+                    <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 15px;">Aqui não há culpa ou punição. Uma queda é apenas um dado científico para nos tornarmos mais fortes.</p>
+                    
+                    <label>Qual foi o Gatilho Desencadeante?</label>
+                    <select id="f-rel-trigger">
+                        <option>Ansiedade</option><option>Estresse</option><option>Solidão</option>
+                        <option>Tédio</option><option>Tristeza</option><option>Redes sociais</option>
+                        <option>Conteúdo adulto</option><option>Insônia</option>
+                    </select>
+
+                    <label>Intensidade da Fissura Anterior à Queda (1-5)</label>
+                    <input type="number" id="f-rel-intensity" min="1" max="5" value="3">
+
+                    <label>Onde sua guarda falhou? (Contexto/Observações)</label>
+                    <textarea id="f-rel-notes" rows="3" placeholder="Identifique o padrão ambiental para blindar a próxima tentativa..."></textarea>
+
+                    <button class="btn-action btn-primary" style="background: var(--danger);" onclick="Engine.submitRelapseForm()">Processar Aprendizado e Reiniciar Contador</button>
+                    <button class="btn-action btn-outline-danger" onclick="Engine.goto('home')" style="margin-top: 10px; border-color: var(--border-color); color: var(--text-title);">Voltar ao Painel</button>
+                </div>
+            </div>
+
+            <div id="panel-sos" class="view-panel">
+                <div class="premium-card" style="border-color: var(--danger); text-align: center;">
+                    <h2 style="color: var(--danger); font-weight: 900; font-size: 1.6rem;">Protocolo Neuro-Inibitório SOS</h2>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">A urgência biológica do impulso dura no máximo 10 minutos. Deixe o tempo passar.</p>
+                    
+                    <div style="font-size: 3.2rem; font-weight: 900; color: var(--danger); margin: 20px 0; font-variant-numeric: tabular-nums;" id="sos-countdown-clock">10:00</div>
+                    
+                    <div class="breath-pulser-node" id="pulser-node">Aguardando</div>
+                    <h4 id="breath-instruction-lbl" style="color: var(--primary); font-weight: 700;">Iniciando ciclo...</h4>
+
+                    <div style="text-align: left; margin-top: 24px; background: var(--bg-app); padding: 14px; border-radius: 12px;">
+                        <h4 style="color: var(--danger); font-weight: 700; margin-bottom: 6px;">Comportamentos de Ruptura de Padrão:</h4>
+                        <ul style="margin-left: 18px; font-size: 0.8rem; line-height: 1.6; color: var(--text-body);">
+                            <li>Levante-se e mude de cômodo imediatamente.</li>
+                            <li>Beba um copo de água extremamente gelada.</li>
+                            <li>Faça flexões até a falha muscular para redirecionar o fluxo sanguíneo.</li>
+                            <li>A dor do arrependimento é permanente; a negação dura minutos.</li>
+                        </ul>
+                    </div>
+
+                    <button class="btn-action btn-primary" onclick="Engine.goto('home')" style="margin-top: 20px;">Estou Seguro / Sair do Modo de Crise</button>
+                </div>
+            </div>
+
+        </main>
+
+        <nav class="bottom-nav">
+            <button class="nav-tab active" onclick="Engine.switchTab('home', this)"><i data-lucide="compass"></i>Foco</button>
+            <button class="nav-tab" onclick="Engine.switchTab('analytics', this)"><i data-lucide="activity"></i>Métricas</button>
+            <button class="nav-tab" onclick="Engine.switchTab('calendar', this)"><i data-lucide="calendar-days"></i>Histórico</button>
+            <button class="nav-tab" onclick="Engine.switchTab('habits', this)"><i data-lucide="shield-check"></i>Hábitos</button>
+            <button class="nav-tab" onclick="Engine.switchTab('settings', this)"><i data-lucide="sliders"></i>Painel</button>
         </nav>
+
     </div>
 
     <script>
-        // Módulo de Dados e Armazenamento Local
-        const Storage = {
-            get() {
-                const defaultData = {
-                    startDate: new Date().getTime(),
-                    bestStreak: 0,
-                    relapses: [],
-                    xp: 0,
-                    level: 1,
-                    habits: [
-                        { id: 1, name: 'Beber Água', history: {} },
-                        { id: 2, name: 'Meditação / Respiração', history: {} },
-                        { id: 3, name: 'Leitura', history: {} }
+        // Data Store (LocalStorage Interface Isolation)
+        const Database = {
+            schemaKey: 'recomeco_v2_core_db',
+            fetch() {
+                const skeleton = {
+                    metaData: { genesisTimestamp: new Date().getTime(), longestStreak: 0 },
+                    gamification: { currentXp: 0, currentLevel: 1 },
+                    relapseHistory: [],
+                    behavioralHabits: [
+                        { id: 101, title: 'Atividade Física Intensa', log: {} },
+                        { id: 102, title: 'Treino de Respiração Controlada', log: {} },
+                        { id: 103, title: 'Leitura Estoica / Auto-Ajuda', log: {} }
                     ],
-                    dayDetails: {},
-                    settings: { theme: 'light', color: '99, 102, 241', fontSize: '16px' }
+                    matrixCalendarLogs: {},
+                    clientConfigs: { theme: 'dark', tint: 'var(--p-indigo)', scale: '100%' }
                 };
-                return JSON.parse(localStorage.getItem('recomeco_data')) || defaultData;
+                return JSON.parse(localStorage.getItem(this.schemaKey)) || skeleton;
             },
-            save(data) {
-                localStorage.setItem('recomeco_data', JSON.stringify(data));
+            commit(payload) {
+                localStorage.setItem(this.schemaKey, JSON.stringify(payload));
             }
         };
 
-        // Biblioteca de artigos local
-        const LibraryDB = [
-            { t: 'Formação de Hábitos', c: 'Hábitos são construídos com Gatilho, Rotina e Recompensa. Mude a rotina mantendo o gatilho.' },
-            { t: 'Controle de Impulsos', c: 'O impulso é como uma onda: ele cresce, atinge o pico e desce sozinho se você não agir.' },
-            { t: 'Ansiedade e Compulsão', c: 'A compulsão tenta aliviar a ansiedade temporariamente. Trate o estresse com respiração profunda.' },
-            { t: 'Foco e Atenção Plena', c: 'Mantenha sua mente no momento presente. A procrastinação alimenta o tédio, que traz o impulso.' }
+        const ArticlesDB = [
+            { title: 'Neuroplasticidade da Compulsão', body: 'O cérebro compulsivo busca caminhos de menor resistência dopaminérgica. Quando você resiste, enfraquece essa sinapse destrutiva e reconstrói o córtex pré-frontal.' },
+            { title: 'O Mecanismo da Onda (Urge Surfing)', body: 'Desejos imperiosos se comportam como ondas oceânicas. Eles escalam até um pico severo de ansiedade e colapsam naturalmente em até 10-15 minutos se você não alimentá-los.' },
+            { title: 'Gatilhos Ambientais Ocultos', body: 'Isolamento social, cansaço físico tardio e tédio crônico são os maiores proliferadores de recaídas. Reconfigure seu ambiente analógico para blindar seu foco.' }
         ];
 
-        // Estado Global da Aplicação
-        let state = Storage.get();
-        let sosInterval = null;
-        let selectedCalDay = null;
+        let RAM = Database.fetch();
+        let chronometerDaemon = null;
+        let sosDaemon = null;
+        let targetInspectionDayStr = null;
 
-        // Core App Module
-        const App = {
+        const Engine = {
             init() {
                 lucide.createIcons();
-                App.startCounter();
-                App.renderHomeHabits();
-                App.renderDashboard();
-                App.renderCalendar();
-                App.applyConfigStyles();
-                App.searchLibrary();
+                Engine.deployChronometer();
+                Engine.renderHabitsHook();
+                Engine.applyConfigsToDOM();
+                Engine.searchLibrary();
                 
-                // Set Data Atual
-                document.getElementById('current-date').innerText = new Date().toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                document.getElementById('live-date-lbl').innerText = new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
             },
 
-            navigate(viewId, element) {
-                document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-                document.getElementById(`view-${viewId}`).classList.add('active');
+            goto(viewName) {
+                document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
+                document.getElementById(`panel-${viewName}`).classList.add('active');
                 
-                if(element) {
-                    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-                    element.classList.add('active');
-                }
-
-                // Gerenciador específico de views
-                if(viewId === 'sos') App.startSosTimer();
-                else App.stopSosTimer();
-
-                if(viewId === 'dashboard') App.renderDashboard();
-                if(viewId === 'calendar') App.renderCalendar();
+                if (viewName === 'sos') Engine.bootSosSystem();
+                else Engine.killSosSystem();
             },
 
-            startCounter() {
-                setInterval(() => {
-                    const now = new Date().getTime();
-                    const diff = now - state.startDate;
+            switchTab(tabId, buttonRef) {
+                Engine.goto(tabId);
+                document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+                if(buttonRef) buttonRef.classList.add('active');
 
-                    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-                    const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                    const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                    const s = Math.floor((diff % (1000 * 60)) / 1000);
+                if (tabId === 'analytics') Engine.compileAnalytics();
+                if (tabId === 'calendar') Engine.generateCalendarGrid();
+                if (tabId === 'habits') Engine.renderHabitsManagement();
+            },
 
-                    document.getElementById('count-d').innerText = String(d).padStart(2, '0');
-                    document.getElementById('count-h').innerText = String(h).padStart(2, '0');
-                    document.getElementById('count-m').innerText = String(m).padStart(2, '0');
-                    document.getElementById('count-s').innerText = String(s).padStart(2, '0');
+            deployChronometer() {
+                if (chronometerDaemon) clearInterval(chronometerDaemon);
+                chronometerDaemon = setInterval(() => {
+                    const delta = new Date().getTime() - RAM.metaData.genesisTimestamp;
+                    
+                    const days = Math.floor(delta / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((delta % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((delta % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((delta % (1000 * 60)) / 1000);
 
-                    // Atualizar metas dinâmicas baseadas nos dias do usuário
-                    App.updateMetaProgress(d);
+                    document.getElementById('c-days').innerText = String(days).padStart(2, '0');
+                    document.getElementById('c-hours').innerText = String(hours).padStart(2, '0');
+                    document.getElementById('c-min').innerText = String(minutes).padStart(2, '0');
+                    document.getElementById('c-sec').innerText = String(seconds).padStart(2, '0');
+
+                    Engine.evaluateMetas(days);
                 }, 1000);
             },
 
-            updateMetaProgress(currentDays) {
-                const milestones = [1, 3, 7, 15, 30, 60, 90, 180, 365];
-                let currentMeta = milestones.find(m => m > currentDays) || 365;
-                let prevMeta = milestones[milestones.indexOf(currentMeta) - 1] || 0;
+            evaluateMetas(currentDays) {
+                const milestones = [1, 3, 7, 14, 30, 90, 180, 365];
+                let nextMilestone = milestones.find(m => m > currentDays) || 365;
+                let lastMilestone = milestones[milestones.indexOf(nextMilestone) - 1] || 0;
+
+                document.getElementById('target-meta-lbl').innerText = `${nextMilestone} Dias`;
+                let percentage = Math.min(100, Math.floor(((currentDays - lastMilestone) / (nextMilestone - lastMilestone)) * 100)) || 0;
                 
-                document.getElementById('meta-txt').innerText = `${currentMeta} Dias`;
-                let percent = Math.min(100, Math.floor(((currentDays - prevMeta) / (currentMeta - prevMeta)) * 100)) || 0;
-                if(currentDays >= currentMeta) percent = 100;
+                document.getElementById('target-meta-pct').innerText = `${percentage}%`;
+                document.getElementById('target-meta-fill').style.width = `${percentage}%`;
 
-                document.getElementById('meta-percent').innerText = `${percent}%`;
-                document.getElementById('meta-bar').style.width = `${percent}%`;
-
-                // Update best streak
-                if(currentDays > state.bestStreak) {
-                    state.bestStreak = currentDays;
-                    Storage.save(state);
+                if (currentDays > RAM.metaData.longestStreak) {
+                    RAM.metaData.longestStreak = currentDays;
+                    Database.commit(RAM);
                 }
             },
 
-            addXp(amount) {
-                state.xp += amount;
-                const nextLevelXp = state.level * 100;
-                if(state.xp >= nextLevelXp) {
-                    state.xp -= nextLevelXp;
-                    state.level++;
-                    alert(`🎉 Parabéns! Você subiu para o Nível ${state.level}! Continue firme.`);
+            triggerXpGain(points) {
+                RAM.gamification.currentXp += points;
+                let cap = RAM.gamification.currentLevel * 100;
+                if (RAM.gamification.currentXp >= cap) {
+                    RAM.gamification.currentXp -= cap;
+                    RAM.gamification.currentLevel++;
+                    alert(`⚡ EVOLUÇÃO NEURAL! Você alcançou o Nível ${RAM.gamification.currentLevel}. Seu cérebro está se reconfigurando.`);
                 }
-                document.getElementById('user-level-txt').innerText = `Nível ${state.level}`;
-                document.getElementById('xp-bar').style.width = `${(state.xp / (state.level * 100)) * 100}%`;
-                Storage.save(state);
+                Engine.syncXpDOM();
+                Database.commit(RAM);
             },
 
-            renderHomeHabits() {
-                const container = document.getElementById('home-habits-list');
-                const todayStr = new Date().toISOString().split('T')[0];
+            syncXpDOM() {
+                let cap = RAM.gamification.currentLevel * 100;
+                document.getElementById('level-title-lbl').innerText = `Guerreiro Nível ${RAM.gamification.currentLevel}`;
+                document.getElementById('xp-numerical').innerText = `${RAM.gamification.currentXp} / ${cap} XP`;
+                document.getElementById('xp-fill-node').style.width = `${(RAM.gamification.currentXp / cap) * 100}%`;
+                
+                const titles = ['🌱','🌿','⚔️','🛡️','🦁','💎','👑'];
+                document.getElementById('badge-master-icon').innerText = titles[Math.min(titles.length-1, Math.floor(RAM.gamification.currentLevel / 3))];
+            },
+
+            renderHabitsHook() {
+                const container = document.getElementById('habits-today-hook');
+                const todayStamp = new Date().toISOString().split('T')[0];
                 container.innerHTML = '';
 
-                state.habits.forEach(h => {
-                    const isDone = h.history[todayStr] ? 'done' : '';
+                RAM.behavioralHabits.forEach(h => {
+                    const done = h.log[todayStamp] ? 'completed' : '';
                     container.innerHTML += `
-                        <div class="habit-item ${isDone}" onclick="App.toggleHabit(${h.id}, '${todayStr}')">
-                            <span>${h.name}</span>
-                            <div class="habit-check">${isDone ? '✓' : ''}</div>
+                        <div class="habit-row ${done}" onclick="Engine.toggleHabitAction(${h.id}, '${todayStamp}')">
+                            <div class="habit-info">
+                                <h4>${h.title}</h4>
+                                <p>${done ? '🎉 Atividade executada com sucesso!' : 'Pendente para hoje'}</p>
+                            </div>
+                            <div class="habit-checkbox-circle">${done ? '✓' : ''}</div>
                         </div>
                     `;
                 });
+                Engine.syncXpDOM();
             },
 
-            toggleHabit(id, dateStr) {
-                const habit = state.habits.find(h => h.id === id);
-                if(habit) {
-                    if(habit.history[dateStr]) {
-                        delete habit.history[dateStr];
+            toggleHabitAction(id, dateKey) {
+                const target = RAM.behavioralHabits.find(x => x.id === id);
+                if (target) {
+                    if (target.log[dateKey]) {
+                        delete target.log[dateKey];
                     } else {
-                        habit.history[dateStr] = true;
-                        App.addXp(15);
+                        target.log[dateKey] = true;
+                        Engine.triggerXpGain(25);
                     }
-                    Storage.save(state);
-                    App.renderHomeHabits();
+                    Database.commit(RAM);
+                    Engine.renderHabitsHook();
                 }
             },
 
-            createCustomHabit() {
-                const name = document.getElementById('new-habit-name').value.trim();
-                if(!name) return;
-                state.habits.push({ id: Date.now(), name: name, history: {} });
-                document.getElementById('new-habit-name').value = '';
-                Storage.save(state);
-                App.renderHomeHabits();
-                App.renderManageHabits();
+            addCustomHabit() {
+                const val = document.getElementById('habit-input-name').value.trim();
+                if (!val) return;
+                RAM.behavioralHabits.push({ id: Date.now(), title: val, log: {} });
+                document.getElementById('habit-input-name').value = '';
+                Database.commit(RAM);
+                Engine.renderHabitsHook();
+                Engine.renderHabitsManagement();
             },
 
-            renderManageHabits() {
-                const container = document.getElementById('manage-habits-list');
-                container.innerHTML = '';
-                state.habits.forEach(h => {
-                    container.innerHTML += `
-                        <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center; padding:8px; border:1px solid var(--border); border-radius:8px;">
-                            <span>${h.name}</span>
-                            <button onclick="App.deleteHabit(${h.id})" style="background:none; border:none; color:var(--danger); cursor:pointer;">Excluir</button>
+            renderHabitsManagement() {
+                const box = document.getElementById('manage-habits-hook');
+                box.innerHTML = '';
+                RAM.behavioralHabits.forEach(h => {
+                    box.innerHTML += `
+                        <div style="display:flex; justify-content:space-between; align-items:center; background: var(--bg-app); padding:10px 14px; border-radius:10px; margin-bottom:6px;">
+                            <span style="font-size:0.9rem; font-weight:600;">${h.title}</span>
+                            <button onclick="Engine.purgeHabit(${h.id})" style="background:none; border:none; color:var(--danger); font-weight:700; cursor:pointer;">Deletar</button>
                         </div>
                     `;
                 });
             },
 
-            deleteHabit(id) {
-                state.habits = state.habits.filter(h => h.id !== id);
-                Storage.save(state);
-                App.renderHomeHabits();
-                App.renderManageHabits();
+            purgeHabit(id) {
+                RAM.behavioralHabits = RAM.behavioralHabits.filter(x => x.id !== id);
+                Database.commit(RAM);
+                Engine.renderHabitsHook();
+                Engine.renderHabitsManagement();
             },
 
-            openRelapseModal() {
-                App.navigate('relapse');
+            submitDiaryForm() {
+                const mood = document.getElementById('f-diary-mood').value;
+                const stress = document.getElementById('f-diary-stress').value;
+                const pos = document.getElementById('f-diary-positive').value;
+                const targetKey = new Date().toISOString().split('T')[0];
+
+                RAM.matrixCalendarLogs[targetKey] = { status: 'clean', mood, stress, notes: pos };
+                Engine.triggerXpGain(40);
+                alert("📝 Diário processado! Seus dados emocionais foram arquivados.");
+                Engine.goto('home');
             },
 
-            saveRelapse() {
-                const trigger = document.getElementById('relapse-trigger').value;
-                const intensity = document.getElementById('relapse-intensity').value;
-                const notes = document.getElementById('relapse-notes').value;
-                const todayStr = new Date().toISOString().split('T')[0];
+            submitRelapseForm() {
+                const trigger = document.getElementById('f-rel-trigger').value;
+                const intensity = document.getElementById('f-rel-intensity').value;
+                const notes = document.getElementById('f-rel-notes').value;
+                const targetKey = new Date().toISOString().split('T')[0];
 
-                state.relapses.push({
-                    date: new Date().getTime(),
-                    trigger, intensity, notes
-                });
-
-                // Registrar recaída no calendário do dia
-                state.dayDetails[todayStr] = { status: 'recap', mood: '🤬 Estressado', urge: intensity, notes: `Recaída: ${notes}` };
-
-                // Reseta contador
-                state.startDate = new Date().getTime();
-                Storage.save(state);
-
-                alert("❤️ O erro não define sua jornada. O que importa é sua coragem de recomeçar agora mesmo! Estamos juntos.");
-                App.navigate('home');
-                App.init();
-            },
-
-            saveDiary() {
-                const mood = document.getElementById('diary-mood').value;
-                const positive = document.getElementById('diary-positive').value;
-                const todayStr = new Date().toISOString().split('T')[0];
-
-                state.dayDetails[todayStr] = { status: 'success', mood: mood, urge: 1, notes: positive };
-                App.addXp(30);
+                RAM.relapseHistory.push({ stamp: new Date().getTime(), trigger, intensity, notes });
+                RAM.matrixCalendarLogs[targetKey] = { status: 'relapse', mood: '🤬 Crise', stress: intensity, notes: `Gatilho: ${trigger}. ${notes}` };
                 
-                alert("✨ Registro salvo! Você ganhou +30 XP pelo seu comprometimento diário.");
-                App.navigate('home');
+                RAM.metaData.genesisTimestamp = new Date().getTime();
+                Database.commit(RAM);
+                
+                alert("🛡️ Registro Concluído. Lembre-se: O recomeço não zera o aprendizado acumulado da sua mente. Levante-se imediatamente!");
+                Engine.goto('home');
+                Engine.init();
             },
 
-            renderCalendar() {
-                const container = document.getElementById('calendar-days');
-                container.innerHTML = '';
-                const today = new Date();
-                const totalDays = new Date(2026, 7, 0).getDate(); // Julho de 2026 estático para demonstração flexível do grid
+            generateCalendarGrid() {
+                const hook = document.getElementById('cal-days-matrix-hook');
+                hook.innerHTML = '';
+                const totalDaysInMonth = new Date(2026, 7, 0).getDate(); // Julho estático contextualizado para 2026
 
-                for(let i = 1; i <= totalDays; i++) {
-                    const currentDayStr = `2026-07-${String(i).padStart(2, '0')}`;
-                    let dayClass = '';
+                for (let day = 1; day <= totalDaysInMonth; day++) {
+                    const trackingStr = `2026-07-${String(day).padStart(2, '0')}`;
+                    let metaClass = '';
                     
-                    if(state.dayDetails[currentDayStr]) {
-                        dayClass = state.dayDetails[currentDayStr].status === 'success' ? 'success' : 'recap';
-                    } else if (i === today.getDate()) {
-                        dayClass = 'current';
+                    if (RAM.matrixCalendarLogs[trackingStr]) {
+                        metaClass = RAM.matrixCalendarLogs[trackingStr].status === 'clean' ? 'status-clean' : 'status-relapse';
+                    } else if (day === new Date().getDate()) {
+                        metaClass = 'status-today';
                     }
 
-                    container.innerHTML += `<div class="cal-day ${dayClass}" onclick="App.openDayNotes('${currentDayStr}')">${i}</div>`;
+                    hook.innerHTML += `<div class="matrix-cell ${metaClass}" onclick="Engine.inspectSelectedCalendarDay('${trackingStr}')">${day}</div>`;
                 }
             },
 
-            openDayNotes(dateStr) {
-                selectedCalDay = dateStr;
-                document.getElementById('day-notes-card').style.display = 'block';
-                document.getElementById('notes-date-title').innerText = `Detalhes de: ${dateStr}`;
-                
-                if(state.dayDetails[dateStr]) {
-                    document.getElementById('cal-mood').value = state.dayDetails[dateStr].mood || '😐 Neutro';
-                    document.getElementById('cal-urge').value = state.dayDetails[dateStr].urge || 1;
-                    document.getElementById('cal-notes').value = state.dayDetails[dateStr].notes || '';
+            inspectSelectedCalendarDay(dateStr) {
+                targetInspectionDayStr = dateStr;
+                document.getElementById('cal-inspection-panel').style.display = 'block';
+                document.getElementById('ins-date-title').innerText = `Data: ${dateStr}`;
+
+                if (RAM.matrixCalendarLogs[dateStr]) {
+                    const reference = RAM.matrixCalendarLogs[dateStr];
+                    document.getElementById('ins-mood-select').value = reference.mood || '😐 Neutro';
+                    document.getElementById('ins-intensity').value = reference.stress || 1;
+                    document.getElementById('ins-text').value = reference.notes || '';
                 } else {
-                    document.getElementById('cal-notes').value = '';
+                    document.getElementById('ins-text').value = '';
                 }
             },
 
-            saveDayDetails() {
-                if(!selectedCalDay) return;
-                if(!state.dayDetails[selectedCalDay]) state.dayDetails[selectedCalDay] = { status: 'success' };
+            saveInspectionDay() {
+                if(!targetInspectionDayStr) return;
+                if(!RAM.matrixCalendarLogs[targetInspectionDayStr]) RAM.matrixCalendarLogs[targetInspectionDayStr] = { status: 'clean' };
                 
-                state.dayDetails[selectedCalDay].mood = document.getElementById('cal-mood').value;
-                state.dayDetails[selectedCalDay].urge = document.getElementById('cal-urge').value;
-                state.dayDetails[selectedCalDay].notes = document.getElementById('cal-notes').value;
+                RAM.matrixCalendarLogs[targetInspectionDayStr].mood = document.getElementById('ins-mood-select').value;
+                RAM.matrixCalendarLogs[targetInspectionDayStr].stress = document.getElementById('ins-intensity').value;
+                RAM.matrixCalendarLogs[targetInspectionDayStr].notes = document.getElementById('ins-text').value;
                 
-                Storage.save(state);
-                App.renderCalendar();
-                alert("Salvo com sucesso!");
+                Database.commit(RAM);
+                Engine.generateCalendarGrid();
+                alert("Alterações integradas com sucesso!");
             },
 
-            renderDashboard() {
-                const currentDiff = new Date().getTime() - state.startDate;
-                const currentDays = Math.floor(currentDiff / (1000 * 60 * 60 * 24));
+            compileAnalytics() {
+                const delta = new Date().getTime() - RAM.metaData.genesisTimestamp;
+                document.getElementById('an-best-streak').innerText = `${RAM.metaData.longestStreak}d`;
+                document.getElementById('an-total-relapses').innerText = RAM.relapseHistory.length;
+
+                // Compilação matemática de Gráfico Nativo em CSS/SVG Flexbox
+                const map = {};
+                RAM.relapseHistory.forEach(r => { map[r.trigger] = (map[r.trigger] || 0) + 1; });
                 
-                document.getElementById('dash-current-streak').innerText = `${currentDays}d`;
-                document.getElementById('dash-best-streak').innerText = `${state.bestStreak}d`;
-                document.getElementById('dash-relapses').innerText = state.relapses.length;
-
-                // Renderizar Gráfico de Gatilhos Simulado por CSS puro
-                const triggerCounts = {};
-                state.relapses.forEach(r => { triggerCounts[r.trigger] = (triggerCounts[r.trigger] || 0) + 1; });
-
-                const chart = document.getElementById('trigger-chart');
-                chart.innerHTML = '';
-                const baseTriggers = ['Ansiedade', 'Estresse', 'Tédio', 'Solidão'];
+                const hook = document.getElementById('triggers-chart-hook');
+                hook.innerHTML = '';
+                const pipeline = ['Ansiedade', 'Estresse', 'Tédio', 'Solidão'];
                 
-                baseTriggers.forEach(t => {
-                    const count = triggerCounts[t] || 0;
-                    const heightPercent = Math.min(100, (count * 20) + 10);
-                    chart.innerHTML += `<div class="chart-column" style="height: ${heightPercent}%;" data-label="${t} (${count})"></div>`;
+                pipeline.forEach(triggerType => {
+                    const weight = map[triggerType] || 0;
+                    const calculatedHeight = Math.min(100, (weight * 25) + 8);
+                    hook.innerHTML += `<div class="chart-svg-bar" style="height: ${calculatedHeight}%;" data-pop="${triggerType}: ${weight}"></div>`;
                 });
-
-                // Medalhas Conquistas
-                const badgesGrid = document.getElementById('badges-grid');
-                badgesGrid.innerHTML = '';
-                const badges = [
-                    { name: '🥇 1º Dia', cond: currentDays >= 1 },
-                    { name: '💎 1 Semana', cond: currentDays >= 7 },
-                    { name: '🔥 1 Mês', cond: currentDays >= 30 },
-                    { name: '🎯 Focado', cond: state.habits.length > 2 }
-                ];
-                let activeBadgesCount = 0;
-                badges.forEach(b => {
-                    if(b.cond) activeBadgesCount++;
-                    badgesGrid.innerHTML += `
-                        <div style="opacity: ${b.cond ? 1 : 0.25}; font-size: 0.75rem;">
-                            <div style="font-size: 1.8rem;">${b.name.split(' ')[0]}</div>
-                            <div>${b.name.split(' ').slice(1).join(' ')}</div>
-                        </div>
-                    `;
-                });
-                document.getElementById('dash-badges').innerText = activeBadgesCount;
             },
 
             searchLibrary() {
-                const query = document.getElementById('lib-search').value.toLowerCase();
-                const container = document.getElementById('library-results');
+                const filter = document.getElementById('lib-search-node').value.toLowerCase();
+                const container = document.getElementById('library-render-hook');
                 container.innerHTML = '';
 
-                const filtered = LibraryDB.filter(a => a.t.toLowerCase().includes(query) || a.c.toLowerCase().includes(query));
-                filtered.forEach(a => {
+                ArticlesDB.filter(a => a.title.toLowerCase().includes(filter) || a.body.toLowerCase().includes(filter)).forEach(a => {
                     container.innerHTML += `
-                        <div style="padding:12px; border-bottom:1px solid var(--border)">
-                            <h4 style="color:var(--primary); font-size:0.95rem;">${a.t}</h4>
-                            <p style="font-size:0.85rem; color:var(--text-muted); margin-top:4px;">${a.c}</p>
+                        <div class="library-card-item">
+                            <h4 style="color:var(--primary); font-weight:700;">${a.title}</h4>
+                            <p style="font-size:0.8rem; color:var(--text-muted); margin-top:4px; line-height:1.5;">${a.body}</p>
                         </div>
                     `;
                 });
             },
 
-            startSosTimer() {
-                let time = 600;
-                if(sosInterval) clearInterval(sosInterval);
-                sosInterval = setInterval(() => {
-                    let min = Math.floor(time / 60);
-                    let seg = time % 60;
-                    document.getElementById('sos-timer').innerText = `${String(min).padStart(2, '0')}:${String(seg).padStart(2, '0')}`;
-                    if(time <= 0) {
-                        clearInterval(sosInterval);
-                        alert("Sensacional! Você resistiu aos 10 minutos críticos. O impulso passou!");
-                        App.navigate('home');
+            bootSosSystem() {
+                let timeLeft = 600;
+                const display = document.getElementById('sos-countdown-clock');
+                const pulser = document.getElementById('pulser-node');
+                const label = document.getElementById('breath-instruction-lbl');
+
+                if (sosDaemon) clearInterval(sosDaemon);
+                
+                // Breath Core Loop Machine
+                let phaseCounter = 0;
+                const executeBreathAnimation = () => {
+                    phaseCounter++;
+                    if(phaseCounter % 12 < 4) {
+                        pulser.className = "breath-pulser-node inhale";
+                        label.innerText = "INSPIRA PROFUNDAMENTE...";
+                    } else if (phaseCounter % 12 < 8) {
+                        pulser.className = "breath-pulser-node hold";
+                        label.innerText = "SEGURA O AR...";
+                    } else {
+                        pulser.className = "breath-pulser-node exhale";
+                        label.innerText = "ESVAZIA O PULMÃO DEVAGAR...";
                     }
-                    time--;
+                };
+
+                executeBreathAnimation();
+                sosDaemon = setInterval(() => {
+                    timeLeft--;
+                    let m = Math.floor(timeLeft / 60);
+                    let s = timeLeft % 60;
+                    display.innerText = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+                    
+                    executeBreathAnimation();
+
+                    if(timeLeft <= 0) {
+                        clearInterval(sosDaemon);
+                        alert("VITÓRIA CRÍTICA! O tempo de saturação neural passou e você se manteve no controle!");
+                        Engine.goto('home');
+                    }
                 }, 1000);
             },
 
-            stopSosTimer() {
-                if(sosInterval) clearInterval(sosInterval);
+            killSosSystem() {
+                if (sosDaemon) clearInterval(sosDaemon);
             },
 
-            applyTheme(theme) {
+            updateTheme(theme) {
                 document.documentElement.setAttribute('data-theme', theme);
-                state.settings.theme = theme;
-                Storage.save(state);
+                RAM.clientConfigs.theme = theme;
+                Database.commit(RAM);
             },
 
-            applyColor(rgbStr) {
-                document.documentElement.style.setProperty('--primary-rgb', rgbStr);
-                state.settings.color = rgbStr;
-                Storage.save(state);
+            updateColor(rgbValue) {
+                document.documentElement.style.setProperty('--primary-rgb', rgbValue.replace('var(--p-', '').replace(')', '')); 
+                document.documentElement.style.setProperty('--primary', rgbValue);
+                RAM.clientConfigs.tint = rgbValue;
+                Database.commit(RAM);
             },
 
-            applyFont(size) {
-                document.documentElement.style.setProperty('--font-size-base', size);
-                state.settings.fontSize = size;
-                Storage.save(state);
+            updateFont(scale) {
+                document.documentElement.style.setProperty('--font-scale', scale);
+                RAM.clientConfigs.scale = scale;
+                Database.commit(RAM);
             },
 
-            applyConfigStyles() {
-                document.getElementById('setting-theme').value = state.settings.theme;
-                document.getElementById('setting-color').value = state.settings.color;
-                document.getElementById('setting-font').value = state.settings.fontSize;
+            applyConfigsToDOM() {
+                document.getElementById('set-theme').value = RAM.clientConfigs.theme;
+                document.getElementById('set-color').value = RAM.clientConfigs.tint;
+                document.getElementById('set-font').value = RAM.clientConfigs.scale;
                 
-                App.applyTheme(state.settings.theme);
-                App.applyColor(state.settings.color);
-                App.applyFont(state.settings.fontSize);
+                Engine.updateTheme(RAM.clientConfigs.theme);
+                if(RAM.clientConfigs.tint.includes('var')) Engine.updateColor(RAM.clientConfigs.tint);
+                Engine.updateFont(RAM.clientConfigs.scale);
             },
 
-            resetAllData() {
-                if(confirm("Tem certeza que quer apagar seu histórico? Isso não pode ser desfeito!")) {
-                    localStorage.removeItem('recomeco_data');
-                    location.reload();
+            wipeDatabase() {
+                if (confirm("Alerta Máximo! Deseja apagar permanentemente todo o seu histórico do Recomeço?")) {
+                    localStorage.removeItem(Database.schemaKey);
+                    window.location.reload();
                 }
             }
         };
 
-        // Inicialização Global do App Shell
-        window.onload = () => { App.init(); App.renderManageHabits(); };
+        window.onload = () => { Engine.init(); };
     </script>
 </body>
 </html>
-
